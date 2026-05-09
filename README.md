@@ -1,4 +1,4 @@
-# 🧠 Zoho Billing AI
+# Zoho Billing AI
 
 > **AI-powered skills and agents for Zoho Billing** — query data, automate workflows, and surface insights using Claude, ChatGPT, or Gemini.
 
@@ -9,7 +9,7 @@
 
 ---
 
-## 📌 What is this?
+## What is this?
 
 **Zoho Billing AI** is a collection of **skills and agents** that bring AI into your Zoho Billing workflows. Instead of navigating dashboards, writing scripts, or exporting data — you describe what you need in plain language, and the AI does the rest.
 
@@ -31,7 +31,7 @@ You (natural language)
 
 ---
 
-## 💡 What makes this different
+## What makes this different
 
 Each skill is a **self-contained, ready-to-run workflow** defined entirely in a prompt file. Plug it into your AI assistant and start using it immediately — no SDK, no deployment, no custom code.
 
@@ -42,7 +42,7 @@ Each skill is a **self-contained, ready-to-run workflow** defined entirely in a 
 
 ---
 
-## 🔧 Prerequisites
+## Prerequisites
 
 1. **A Zoho Billing account** with API access enabled
 2. **Zoho Billing MCP** set up and connected — see [zoho/zoho-billing-mcp](https://github.com/zoho/zoho-billing-mcp) for setup instructions
@@ -50,7 +50,7 @@ Each skill is a **self-contained, ready-to-run workflow** defined entirely in a 
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 **Step 1 — Set up Zoho Billing MCP**
 
@@ -66,29 +66,29 @@ Talk to your AI in plain language. The skill handles the rest — MCP tool calls
 
 ---
 
-## 🗂️ Skills Catalog
+## Skills Catalog
 
 Each skill is a `SKILL.md` file containing the full workflow, MCP tool calls, edge cases, and expected output. Click through to the skill file for complete details.
 
 | Skill | What it does | Key Zoho APIs used | Trigger phrases |
 |---|---|---|---|
-| [💰 Cash Collection Prioritization](skills/cash-collection-prioritization/SKILL.md) | AR worklist ranked by balance + payment behaviour anomalies | `get_ar_aging`, `get_customer_balances` | *"show me collections"*, *"who should I chase today"* |
-| [🌍 Country Performance Analysis](skills/country-performance-analysis/SKILL.md) | Compares subscription activations, cancellations, net growth by country | `get_countrywise_activations_report`, `get_countrywise_cancellations_report` | *"compare countries"*, *"how is each region doing"* |
+| [Cash Collection Prioritization](skills/cash-collection-prioritization/SKILL.md) | AR worklist ranked by balance + payment behaviour anomalies | `get_ar_aging`, `get_customer_balances` | *"show me collections"*, *"who should I chase today"* |
+| [Country Performance Analysis](skills/country-performance-analysis/SKILL.md) | Compares subscription activations, cancellations, net growth by country | `get_countrywise_activations_report`, `get_countrywise_cancellations_report` | *"compare countries"*, *"how is each region doing"* |
 
 ---
 
-## 🤖 Agents Catalog
+## Agents Catalog [In Progress]
 
 Agents combine multiple skills into a single orchestrated workflow. Each agent has its own `README.md` with full details on what it does, which skills it composes, and how to run it.
 
 | Agent | What it does |
 |---|---|
-| [📊 Subscription Insights Agent](agents/subscription-insights/README.md) | Monthly summary of activations, MRR, active subscriptions, and churn rate |
-| [🔁 Retention Agent](agents/retention/README.md) | Sends retention emails to customers based on LTV, LTD, and the org's retention policy |
+| Subscription Insights Agent | Monthly summary of activations, MRR, active subscriptions, and churn rate |
+| Retention Agent | Sends retention emails to customers based on LTV, LTD, and the companies retention policy |
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌──────────────────────────────────────────┐
@@ -119,7 +119,7 @@ Agents combine multiple skills into a single orchestrated workflow. Each agent h
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 zoho-billing-ai/
@@ -137,7 +137,7 @@ zoho-billing-ai/
 
 ---
 
-## 🗺️ Roadmap
+## Roadmap
 
 **Skills in progress**
 - [ ] **Salesperson Performance** — analyse subscription activations, revenue contribution, and conversion rates by salesperson over a selected period
