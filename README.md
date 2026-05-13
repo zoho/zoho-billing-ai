@@ -2,7 +2,7 @@
 
 > **AI-powered skills and agents for Zoho Billing** — query data, automate workflows, and surface insights using Claude, ChatGPT, or Gemini.
 
-[![License: Apache 2.0](https://img.shields.io/github/license/zoho/zoho-billing-ai?style=flat-square)](LICENSE)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue?style=flat-square)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/zoho/zoho-billing-ai?style=flat-square)](https://github.com/zoho/zoho-billing-ai/stargazers)
 [![Last commit](https://img.shields.io/github/last-commit/zoho/zoho-billing-ai?style=flat-square)](https://github.com/zoho/zoho-billing-ai/commits/main)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](https://github.com/zoho/zoho-billing-ai/pulls)
