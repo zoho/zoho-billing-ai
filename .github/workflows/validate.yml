@@ -1,0 +1,49 @@
+name: Validate plugins
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check plugin manifests exist
+        run: |
+          for agent_dir in claude/agents/*/; do
+            agent=$(basename "$agent_dir")
+            manifest="$agent_dir/.claude-plugin/plugin.json"
+            if [ ! -f "$manifest" ]; then
+              echo "❌  Missing .claude-plugin/plugin.json in $agent_dir"
+              exit 1
+            fi
+            echo "✅  $agent — manifest OK"
+            # Validate JSON
+            python3 -c "import json; json.load(open('$manifest'))" || { echo "❌  Invalid JSON in $manifest"; exit 1; }
+          done
+
+      - name: Check all SKILL.md files have front-matter
+        run: |
+          python3 - <<'PYEOF'
+          import pathlib, sys
+          errors = []
+          for skill in pathlib.Path("claude/agents").rglob("SKILL.md"):
+              content = skill.read_text()
+              if not content.startswith("---"):
+                  errors.append(f"Missing YAML front-matter: {skill}")
+          if errors:
+              for e in errors: print(f"❌  {e}")
+              sys.exit(1)
+          print(f"✅  All SKILL.md files have front-matter")
+          PYEOF
+
+      - name: Build each plugin (dry run)
+        run: |
+          for agent_dir in claude/agents/*/; do
+            agent=$(basename "$agent_dir")
+            bash scripts/build-plugin.sh "$agent"
+          done

@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Plugin build artifacts
+*.zip
+*.plugin
+
+# Runtime output
+retention-runs/
+claude/agents/**/tests/output/

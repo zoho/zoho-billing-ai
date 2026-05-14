@@ -1,0 +1,43 @@
+{
+  "name": "retention-agent",
+  "version": "1.0.0",
+  "description": "Pre-churn and win-back retention workflow for Zoho Billing. Detects at-risk subscriptions, classifies cancel reasons, applies a tunable YAML decision matrix (LTV x LTD x reason), and produces a propose-only Markdown recommendation report for human review.",
+  "author": {
+    "name": "Vishwa Ganesan",
+    "email": "vishwa.ganesan@zohocorp.com"
+  },
+  "keywords": [
+    "zoho-billing",
+    "retention",
+    "churn",
+    "win-back",
+    "subscriptions"
+  ],
+  "mcps": [
+    {
+      "name": "Zoho-MCP",
+      "command": "npx",
+      "args": ["-y", "@zoho/zoho-billing-mcp"],
+      "env": {
+        "ZOHO_BILLING_ORG_ID": "${ZOHO_BILLING_ORG_ID}",
+        "ZOHO_BILLING_OAUTH_TOKEN": "${ZOHO_BILLING_OAUTH_TOKEN}",
+        "ZOHO_DOMAIN": "${ZOHO_DOMAIN:-zoho.com}"
+      }
+    }
+  ],
+  "requiredEnv": [
+    {
+      "key": "ZOHO_BILLING_ORG_ID",
+      "description": "Your Zoho Billing Organisation ID"
+    },
+    {
+      "key": "ZOHO_BILLING_OAUTH_TOKEN",
+      "description": "OAuth access token with ZohoSubscriptions.reports.READ scope"
+    },
+    {
+      "key": "ZOHO_DOMAIN",
+      "description": "Zoho data-centre domain — zoho.com (default) or zoho.in",
+      "default": "zoho.com"
+    }
+  ]
+}

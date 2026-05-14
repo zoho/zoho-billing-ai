@@ -1,0 +1,213 @@
+# ============================================================
+# Retention Strategy Matrix
+# ============================================================
+# This file defines the rules the retention agent applies to each
+# at-risk subscription. EDIT THIS FILE to tune the agent's behavior —
+# you do not need to change any skill code.
+#
+# Sections:
+#   1. ltv_tiers          — LTV thresholds that bucket customers
+#   2. ltd_tiers          — tenure (lifetime days) thresholds
+#   3. reason_taxonomy    — free-text → canonical reason buckets
+#   4. pre_churn_matrix   — rules for non-renewing customers
+#   5. win_back_matrix    — rules for already-cancelled customers
+#
+# Rule evaluation:
+#   - Rules in each matrix are evaluated TOP-TO-BOTTOM.
+#   - The FIRST rule whose `match` clause is satisfied wins.
+#   - Always end each matrix with a catch-all rule (match: {}) so
+#     every subscription gets a recommendation.
+# ============================================================
+
+# ----------------------------------------------------------------
+# 1. LTV tiers — customer value buckets
+# ----------------------------------------------------------------
+# A subscription is bucketed into the FIRST tier whose range matches.
+# Tune these thresholds to reflect what "high value" means for your book.
+# Currency: USD (or whatever the org's base currency is — keep consistent).
+ltv_tiers:
+  high:    { min: 5000 }                   # LTV ≥ $5,000
+  medium:  { min: 1000, max: 5000 }        # $1,000 ≤ LTV < $5,000
+  low:     { max: 1000 }                   # LTV < $1,000
+
+# ----------------------------------------------------------------
+# 2. LTD tiers — tenure buckets
+# ----------------------------------------------------------------
+# How long the customer has been a customer. Used as a secondary
+# signal — long-tenured customers often deserve more aggressive saves
+# even if their LTV is mid-range.
+ltd_tiers:
+  veteran:     { min_days: 730 }                    # 2+ years
+  established: { min_days: 180, max_days: 730 }     # 6 months – 2 years
+  new:         { max_days: 180 }                    # under 6 months
+
+# ----------------------------------------------------------------
+# 3. Reason taxonomy — free-text → canonical bucket
+# ----------------------------------------------------------------
+# Cancel reasons from the API are free-text. The classifier matches
+# the lower-cased reason text against these keyword lists; the FIRST
+# bucket with a keyword match wins. If nothing matches, the reason
+# is bucketed as `unknown` and the catch-all rules apply.
+#
+# To handle new reason phrasings you see in the data: add the
+# new keywords to the appropriate bucket here. No code changes needed.
+reason_taxonomy:
+  price:
+    keywords: [expensive, costly, too much, budget, afford, pricing, price, cheaper, cost cutting]
+  feature_gap:
+    keywords: [missing, feature, doesnt have, competitor, switching, switch to, moving to, alternative, lacks]
+  temporary:
+    keywords: [pause, paused, hold, seasonal, later, temporarily, vacation, break, on hold, off-season]
+  quality:
+    keywords: [bug, buggy, slow, broken, support, unresponsive, downtime, error, issue, glitch, crash, frustrating]
+  business_end:
+    keywords: [closed, shutting down, no longer needed, going out, ceased, dissolved, bankruptcy, acquired, merged]
+  duplicate_account:
+    keywords: [duplicate, accidentally, by mistake, wrong account, two accounts]
+
+# ----------------------------------------------------------------
+# 4. Pre-churn decision matrix
+# ----------------------------------------------------------------
+# Rules for subscriptions in the NON-RENEWING state (customer indicated
+# they will not renew, but the subscription is still active until cycle end).
+# Save rates here are highest — invest accordingly.
+#
+# Each rule has:
+#   match:      — conditions that must ALL be true (AND semantics).
+#                 Fields: reason, ltv (tier name), ltd (tier name).
+#                 Omit a field to mean "any value".
+#   action:     — one of: discount, pause, downgrade, human_triage,
+#                 standard_offer, accept
+#   params:     — parameters for the action; varies by action type
+#   rationale:  — short explanation that gets included in the proposal
+#                 so reviewers see why this offer was selected
+pre_churn_matrix:
+  # -- Price objections — highest save rate with a discount --
+  - match: { reason: price, ltv: high }
+    action: discount
+    params: { percent: 25, duration_months: 3 }
+    rationale: "High-LTV customer citing price — aggressive 3-month discount preserves long-term value"
+
+  - match: { reason: price, ltv: medium }
+    action: discount
+    params: { percent: 15, duration_months: 3 }
+    rationale: "Mid-LTV price objection — moderate discount with clear end date"
+
+  - match: { reason: price, ltv: low }
+    action: downgrade
+    params: { target: next_lower_tier }
+    rationale: "Low-LTV price objection — offer cheaper plan rather than discount the current one"
+
+  # -- Temporary pauses — pause length scales with LTV --
+  - match: { reason: temporary, ltv: high }
+    action: pause
+    params: { duration_months: 3 }
+    rationale: "High-LTV temporary pause — generous hold to keep relationship warm"
+
+  - match: { reason: temporary, ltv: medium }
+    action: pause
+    params: { duration_months: 2 }
+    rationale: "Mid-LTV temporary pause — moderate hold"
+
+  - match: { reason: temporary, ltv: low }
+    action: pause
+    params: { duration_months: 1 }
+    rationale: "Low-LTV temporary pause — short hold; will reassess at resume"
+
+  # -- Feature gaps — humans handle this, not automation --
+  - match: { reason: feature_gap, ltv: high }
+    action: human_triage
+    params: { route_to: "Customer Success", priority: high }
+    rationale: "High-LTV feature gap needs a real conversation, not a coupon"
+
+  - match: { reason: feature_gap, ltv: medium }
+    action: human_triage
+    params: { route_to: "Customer Success", priority: normal }
+    rationale: "Mid-LTV feature gap — CS to recommend alternate plan or roadmap timeline"
+
+  - match: { reason: feature_gap, ltv: low }
+    action: accept
+    params: { offer: "feedback_survey" }
+    rationale: "Low-LTV feature gap — collect feedback for product team, don't fight the cancel"
+
+  # -- Quality/support issues — must escalate, never discount --
+  - match: { reason: quality }
+    action: human_triage
+    params: { route_to: "Customer Success Escalation", priority: high }
+    rationale: "Quality issue raised — a discount won't fix this; CS needs to address the underlying problem"
+
+  # -- Business ended — accept gracefully --
+  - match: { reason: business_end }
+    action: accept
+    params: { offer: "data_export_assistance" }
+    rationale: "Customer's business is ending — offer data export, don't push retention"
+
+  # -- Duplicate account — accept, no offer --
+  - match: { reason: duplicate_account }
+    action: accept
+    params: {}
+    rationale: "Duplicate account — no save attempt needed"
+
+  # -- Veteran fallback — long-tenured customers get human attention --
+  - match: { ltd: veteran }
+    action: human_triage
+    params: { route_to: "Customer Success", priority: high }
+    rationale: "Long-tenured customer (2+ years) — worth a human conversation regardless of reason bucket"
+
+  # -- Unknown reason, high LTV — human triage --
+  - match: { reason: unknown, ltv: high }
+    action: human_triage
+    params: { route_to: "Customer Success", priority: normal }
+    rationale: "High-LTV with no captured reason — CS to discover and respond"
+
+  # -- Catch-all — standard offer --
+  - match: {}
+    action: standard_offer
+    params: { discount_percent: 10, duration_months: 2 }
+    rationale: "Fallback offer when no specific rule matched"
+
+# ----------------------------------------------------------------
+# 5. Win-back matrix (post-churn)
+# ----------------------------------------------------------------
+# Rules for customers who have ALREADY cancelled. Save rates are
+# lower, so incentives are larger — but we never spend more than
+# the customer's remaining LTV potential warrants.
+#
+# This matrix is intentionally smaller — most cases route to email
+# campaigns or human follow-up rather than automated offers.
+win_back_matrix:
+  - match: { reason: price, ltv: high }
+    action: discount
+    params: { percent: 40, duration_months: 6 }
+    rationale: "High-LTV price-driven churn — strong reactivation incentive"
+
+  - match: { reason: price, ltv: medium }
+    action: discount
+    params: { percent: 25, duration_months: 6 }
+    rationale: "Mid-LTV price-driven churn — moderate reactivation offer"
+
+  - match: { reason: temporary }
+    action: human_triage
+    params: { route_to: "Reactivation Outreach", priority: normal }
+    rationale: "Customer who paused — direct outreach when their stated return-by date approaches"
+
+  - match: { reason: feature_gap, ltv: high }
+    action: human_triage
+    params: { route_to: "Customer Success", priority: high }
+    rationale: "High-LTV that left for a feature — CS should check if the gap is now closed"
+
+  - match: { reason: business_end }
+    action: accept
+    params: {}
+    rationale: "Business ended — no win-back attempt"
+
+  - match: { reason: quality }
+    action: human_triage
+    params: { route_to: "Customer Success Escalation", priority: normal }
+    rationale: "Quality-driven churn — only re-approach once the issue is verifiably resolved"
+
+  # Catch-all — standard win-back email campaign
+  - match: {}
+    action: standard_offer
+    params: { discount_percent: 20, duration_months: 3, channel: "email_campaign" }
+    rationale: "Default win-back: include in monthly reactivation email with standard 20% offer"

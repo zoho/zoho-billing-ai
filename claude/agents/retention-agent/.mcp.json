@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "Zoho-MCP": {
+      "command": "npx",
+      "args": ["-y", "@zoho/zoho-billing-mcp"],
+      "env": {
+        "ZOHO_BILLING_ORG_ID": "${ZOHO_BILLING_ORG_ID}",
+        "ZOHO_BILLING_OAUTH_TOKEN": "${ZOHO_BILLING_OAUTH_TOKEN}"
+      }
+    }
+  }
+}
