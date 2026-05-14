@@ -16,7 +16,28 @@ Runs the full pipeline. **Propose-only** — writes a Markdown report for human 
 
 ## Workflow
 
-### Pre-flight
+### Pre-flight — connector validation (run first, before anything else)
+
+Check that every required Zoho Billing tool is available in the current session. The three tools this pipeline depends on are:
+
+- `ZohoBilling_get_non_renewing_subscriptions_report`
+- `ZohoBilling_get_churned_subscriptions_report`
+- `ZohoBilling_list_organizations`
+
+**How to check:** attempt to introspect or list available tools. If any of the three are absent, stop immediately and surface this message to the user:
+
+> ⚠️ **Missing Zoho Billing tools**
+>
+> The retention agent needs these tools from your Zoho-MCP connector but they are not available:
+> - `<list missing tools>`
+>
+> To fix this:
+> 1. Go to **Settings → Connectors → Zoho Billing**
+> 2. Enable the missing tools (or choose "All tools")
+> 3. Re-run the retention agent
+>
+> Do not proceed past this point until all three tools are confirmed available.
+
 - Get org ID via `list_organizations`; ask if multiple exist.
 - Default scope: **both** pre-churn (next 30 days) + post-churn (last 7 days). Honor explicit user scope if given.
 - If `retention-proposals.md` already exists for today → ask to overwrite or use `-rerun-<n>` suffix.

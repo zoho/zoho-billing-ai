@@ -41,6 +41,133 @@ jobs:
           print(f"✅  All SKILL.md files have front-matter")
           PYEOF
 
+      - name: Validate Zoho authorship in plugins and skills
+        run: |
+          python3 - <<'PYEOF'
+          """
+          Enforce that every author / owner declaration across plugins and skills
+          belongs to Zoho.
+
+          Rules
+          -----
+          1. marketplace.json  → owner.name must contain "zoho" (case-insensitive)
+                               → owner.email (if set) must end with a Zoho domain
+                               → each plugin entry's author.name must contain "zoho"
+          2. plugin.json       → author.name must contain "zoho"
+                                 OR author.email must end with a Zoho domain
+          3. SKILL.md          → if the YAML front-matter contains an `author` key:
+                                   • string value  → must contain "zoho"
+                                   • dict value    → .name must contain "zoho"
+                                                     .email (if set) must end with a Zoho domain
+
+          Zoho domains: zoho.com, zohocorp.com, zohomail.com, zohocorp.in, zoho.in
+          """
+          import json, pathlib, re, sys
+          import yaml          # available in ubuntu-latest (python3-yaml)
+
+          ZOHO_DOMAINS = {"zoho.com", "zohocorp.com", "zohomail.com", "zohocorp.in", "zoho.in"}
+          errors = []
+
+          def is_zoho_name(name: str) -> bool:
+              return "zoho" in (name or "").lower()
+
+          def is_zoho_email(email: str) -> bool:
+              domain = (email or "").split("@")[-1].lower()
+              return domain in ZOHO_DOMAINS
+
+          def check_author(obj: dict, label: str):
+              """Validate a dict that may contain name / email keys."""
+              name  = obj.get("name", "")
+              email = obj.get("email", "")
+              name_ok  = is_zoho_name(name)
+              email_ok = is_zoho_email(email) if email else False
+              if not (name_ok or email_ok):
+                  errors.append(
+                      f"{label}: author/owner must be Zoho-affiliated "
+                      f"(got name={name!r}, email={email!r})"
+                  )
+
+          # ── 1. marketplace.json ─────────────────────────────────────────────
+          mkt_path = pathlib.Path(".claude-plugin/marketplace.json")
+          if mkt_path.exists():
+              mkt = json.loads(mkt_path.read_text())
+
+              owner = mkt.get("owner", {})
+              if not is_zoho_name(owner.get("name", "")):
+                  errors.append(
+                      f"marketplace.json owner.name must contain 'Zoho' "
+                      f"(got {owner.get('name')!r})"
+                  )
+              if owner.get("email") and not is_zoho_email(owner["email"]):
+                  errors.append(
+                      f"marketplace.json owner.email must use a Zoho domain "
+                      f"(got {owner['email']!r})"
+                  )
+
+              for plugin in mkt.get("plugins", []):
+                  pname  = plugin.get("name", "<unnamed>")
+                  author = plugin.get("author", {})
+                  if isinstance(author, str):
+                      if not is_zoho_name(author):
+                          errors.append(
+                              f"marketplace.json plugin '{pname}' author "
+                              f"must contain 'Zoho' (got {author!r})"
+                          )
+                  elif isinstance(author, dict):
+                      check_author(author, f"marketplace.json plugin '{pname}'")
+                  else:
+                      errors.append(
+                          f"marketplace.json plugin '{pname}' is missing an author field"
+                      )
+          else:
+              print("⚠️   .claude-plugin/marketplace.json not found — skipping marketplace checks")
+
+          # ── 2. plugin.json per agent ────────────────────────────────────────
+          for manifest in pathlib.Path("claude/agents").rglob(".claude-plugin/plugin.json"):
+              data   = json.loads(manifest.read_text())
+              label  = str(manifest)
+              author = data.get("author", {})
+              if isinstance(author, str):
+                  if not is_zoho_name(author):
+                      errors.append(f"{label}: author must contain 'Zoho' (got {author!r})")
+              elif isinstance(author, dict):
+                  check_author(author, label)
+              else:
+                  errors.append(f"{label}: missing 'author' field")
+
+          # ── 3. SKILL.md front-matter ────────────────────────────────────────
+          FM_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
+          for skill in pathlib.Path("claude/agents").rglob("SKILL.md"):
+              content = skill.read_text()
+              m = FM_RE.match(content)
+              if not m:
+                  continue   # front-matter absence is caught by the earlier step
+              fm = yaml.safe_load(m.group(1)) or {}
+              author = fm.get("author")
+              if author is None:
+                  continue   # author field is optional in SKILL.md
+              label = str(skill)
+              if isinstance(author, str):
+                  if not is_zoho_name(author):
+                      errors.append(
+                          f"{label}: front-matter 'author' must contain 'Zoho' "
+                          f"(got {author!r})"
+                      )
+              elif isinstance(author, dict):
+                  check_author(author, label)
+              else:
+                  errors.append(f"{label}: unrecognised 'author' type in front-matter")
+
+          # ── Report ──────────────────────────────────────────────────────────
+          if errors:
+              print("\n❌  Zoho authorship validation FAILED:\n")
+              for e in errors:
+                  print(f"   • {e}")
+              sys.exit(1)
+          else:
+              print("✅  All plugins and skills have Zoho-affiliated authors/owners")
+          PYEOF
+
       - name: Build each plugin (dry run)
         run: |
           for agent_dir in claude/agents/*/; do

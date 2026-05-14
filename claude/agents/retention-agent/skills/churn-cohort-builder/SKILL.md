@@ -25,6 +25,13 @@ Assembles the retention cohort from Zoho Billing reports. Two types:
 
 ## Workflow
 
+**0. Verify tools** — before any API calls, confirm these tools are available in the session:
+- `ZohoBilling_get_non_renewing_subscriptions_report`
+- `ZohoBilling_get_churned_subscriptions_report`
+- `ZohoBilling_list_organizations`
+
+If any are missing, stop and tell the user: "The Zoho Billing connector is connected but the tool `<name>` is not enabled. Go to Settings → Connectors → Zoho Billing → enable that tool, then retry."
+
 **1. Get org ID** — call `list_organizations` if unknown; ask if multiple exist (never guess).
 
 **2. Pull reports** — run in parallel if both cohorts needed:
