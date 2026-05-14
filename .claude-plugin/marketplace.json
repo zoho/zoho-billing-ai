@@ -1,0 +1,18 @@
+{
+  "name": "zoho-billing-ai",
+  "owner": {
+    "name": "Zoho",
+    "email": "support@zoho.com"
+  },
+  "plugins": [
+    {
+      "name": "retention-agent",
+      "source": "./claude/agents/retention-agent/",
+      "description": "Pre-churn and win-back retention workflow for Zoho Billing. Detects at-risk subscriptions, classifies cancel reasons, and produces a propose-only recommendation report for human review.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Zoho"
+      }
+    }
+  ]
+}
