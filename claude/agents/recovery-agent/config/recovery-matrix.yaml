@@ -1,0 +1,142 @@
+# ============================================================
+# Recovery Strategy Matrix
+# ============================================================
+# This file defines the rules the recovery agent applies to each
+# lost opportunity and abandoned cart. EDIT THIS FILE to tune the
+# agent's behavior — no skill code changes needed.
+#
+# Sections:
+#   1. value_tiers      — lost value thresholds that bucket leads/carts
+#   2. recency_tiers    — days-since-event thresholds (freshness)
+#   3. lost_opportunity_matrix — rules for leads who never completed signup
+#   4. abandoned_cart_matrix   — rules for visitors who started checkout but left
+#
+# Rule evaluation:
+#   - Rules in each matrix are evaluated TOP-TO-BOTTOM.
+#   - The FIRST rule whose `match` clause is satisfied wins.
+#   - Always end each matrix with a catch-all rule (match: {}) so
+#     every record gets a recommendation.
+# ============================================================
+
+# ----------------------------------------------------------------
+# 1. Value tiers — potential/cart value buckets
+# ----------------------------------------------------------------
+# Bucket is determined by the `lost_value` field (annual or monthly
+# contract value, whichever is available). Currency: USD (or your
+# org's base currency — keep consistent).
+value_tiers:
+  high:   { min: 1000 }              # ≥ $1,000 ACV
+  medium: { min: 200, max: 1000 }    # $200 – $999 ACV
+  low:    { max: 200 }               # < $200 ACV
+
+# ----------------------------------------------------------------
+# 2. Recency tiers — how fresh the event is
+# ----------------------------------------------------------------
+# Fresh leads respond much better. The sooner we act the higher the
+# recovery rate — recency is therefore the primary sort key.
+recency_tiers:
+  fresh:  { max_days: 2 }    # ≤ 2 days ago — highest urgency
+  recent: { max_days: 7 }    # 3–7 days ago — still warm
+  cold:   { min_days: 7 }    # > 7 days ago — harder to recover
+
+# ----------------------------------------------------------------
+# 3. Lost Opportunity matrix
+# ----------------------------------------------------------------
+# Rules for prospects who expressed intent (e.g., started a trial,
+# reached the pricing page, or began onboarding) but never converted.
+# These leads have lower intent than abandoned-cart but still
+# warrant proactive outreach.
+#
+# Each rule has:
+#   match:     — conditions that must ALL be true (AND semantics).
+#               Fields: value (tier name), recency (tier name).
+#               Omit a field to mean "any value".
+#   action:    — one of: human_outreach, email_with_discount,
+#                email_reminder, email_sequence, accept
+#   params:    — action-specific parameters
+#   rationale: — shown in the proposal so reviewers understand why
+lost_opportunity_matrix:
+
+  # -- High value, very fresh — personal touch wins --
+  - match: { value: high, recency: fresh }
+    action: human_outreach
+    params: { route_to: "Sales", priority: urgent, contact_within_hours: 4 }
+    rationale: "High-value lead lost <2 days ago — Sales should reach out personally within 4 hours while intent is highest"
+
+  # -- High value, still warm — strong incentive email --
+  - match: { value: high, recency: recent }
+    action: email_with_discount
+    params: { discount_percent: 20, coupon_duration_months: 3, expiry_hours: 48 }
+    rationale: "High-value lead cooling off — 20% welcome-back discount with a 48-hour urgency window"
+
+  # -- Medium value, fresh — move fast with a mid-tier offer --
+  - match: { value: medium, recency: fresh }
+    action: email_with_discount
+    params: { discount_percent: 15, coupon_duration_months: 2, expiry_hours: 72 }
+    rationale: "Mid-value fresh lead — 15% discount email before they forget"
+
+  # -- Medium value, recent — nurture sequence --
+  - match: { value: medium, recency: recent }
+    action: email_sequence
+    params: { sequence: "lost_opportunity_nurture", steps: 3, cadence_days: [0, 3, 7] }
+    rationale: "Mid-value lead gone quiet — 3-step nurture sequence (day 0, 3, 7) with value messaging"
+
+  # -- Low value, any recency — lightweight automated flow --
+  - match: { value: low }
+    action: email_sequence
+    params: { sequence: "standard_recovery", steps: 2, cadence_days: [0, 5] }
+    rationale: "Low-value lead — standard 2-step automated recovery sequence"
+
+  # -- Catch-all --
+  - match: {}
+    action: email_sequence
+    params: { sequence: "standard_recovery", steps: 2, cadence_days: [0, 5] }
+    rationale: "Default recovery: standard 2-step email sequence"
+
+# ----------------------------------------------------------------
+# 4. Abandoned Cart matrix
+# ----------------------------------------------------------------
+# Rules for visitors who reached checkout, added a plan to their cart,
+# and left without completing payment. These are the highest-intent
+# prospects — a small nudge often converts them.
+#
+# Prioritize these above lost opportunities of equivalent value because
+# the barrier to recovery is lower (they know the product, they chose
+# a plan — they just didn't click Pay).
+abandoned_cart_matrix:
+
+  # -- High value, very fresh — call them now --
+  - match: { value: high, recency: fresh }
+    action: human_outreach
+    params: { route_to: "Sales", priority: urgent, contact_within_hours: 2 }
+    rationale: "High-value cart abandoned <2 days — immediate personal outreach; they were seconds from buying"
+
+  # -- High value, still warm — urgency discount --
+  - match: { value: high, recency: recent }
+    action: email_with_discount
+    params: { discount_percent: 15, expiry_hours: 48, include_cart_contents: true }
+    rationale: "High-value cart cooling — 15% off with 48-hour timer and cart contents reminder"
+
+  # -- Medium value, fresh — strong reminder, no discount needed --
+  - match: { value: medium, recency: fresh }
+    action: email_reminder
+    params: { include_cart_contents: true, urgency: high, expiry_hours: 24 }
+    rationale: "Mid-value fresh abandon — cart reminder with urgency; try without discount first"
+
+  # -- Medium value, recent — add a small incentive --
+  - match: { value: medium, recency: recent }
+    action: email_with_discount
+    params: { discount_percent: 10, expiry_hours: 72, include_cart_contents: true }
+    rationale: "Mid-value cart going cold — 10% nudge with cart contents and time pressure"
+
+  # -- Low value, any recency — simple reminder --
+  - match: { value: low }
+    action: email_reminder
+    params: { include_cart_contents: true, urgency: normal }
+    rationale: "Low-value abandoned cart — standard cart reminder email"
+
+  # -- Catch-all --
+  - match: {}
+    action: email_reminder
+    params: { include_cart_contents: true, urgency: normal }
+    rationale: "Default: cart contents reminder email"
