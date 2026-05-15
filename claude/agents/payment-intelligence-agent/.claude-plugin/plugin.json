@@ -1,0 +1,11 @@
+{
+  "name": "payment-intelligence-agent",
+  "version": "0.1.0",
+  "description": "Predict and prevent involuntary churn by identifying payment failures early and recommending proactive interventions. Customized with decision matrix for your company's recovery strategies.",
+  "author": {
+    "name": "Zoho Billing"
+  },
+  "keywords": ["subscription", "payment", "churn", "dunning", "recovery", "decision-matrix"],
+  "repository": "https://github.com/zoho/zoho-billing-ai",
+  "mcpServers": "./.mcp.json"
+}
