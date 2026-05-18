@@ -1,0 +1,185 @@
+# Payment Recovery Decision Matrix
+# Maps risk tier + failure type → recovery action and incentive
+# Edit thresholds and strategies here — no code changes needed
+#
+# Usage: Recovery Recommender applies this matrix at each run
+# All recommendations are propose-only (produce Markdown reports for human review)
+
+---
+decision_matrix:
+  # LTV-based thresholds (Lifetime Value in dollars)
+  ltv_tiers:
+    high: 5000        # Customers with LTV >= $5000
+    medium: 1000      # Customers with LTV >= $1000
+    low: 0            # Customers with LTV < $1000
+
+  # LTD-based thresholds (Lifetime Duration in days)
+  ltd_tiers:
+    long_term: 365    # Customers active >= 1 year
+    standard: 90      # Customers active >= 3 months
+    new: 0            # Customers active < 3 months
+
+  # Recovery strategies by risk tier
+  # risk_tier: (critical | high | medium | low)
+  # See dunning-risk-assessor output for risk classifications
+  strategies:
+    critical:
+      # Critical: Customers at risk of losing within 7 days
+      success_probability: 0.30  # Expected recovery rate
+      actions:
+        card_expired:
+          primary: "update_payment_method"
+          incentive: "none"
+          message_template: "notify_payment_update_required"
+        insufficient_funds:
+          primary: "retry_with_delay"
+          incentive: "discount_5pct"
+          message_template: "notify_payment_failed"
+        gateway_declined:
+          primary: "manual_triage"
+          incentive: "none"
+          message_template: "escalate_to_support"
+        unknown:
+          primary: "manual_triage"
+          incentive: "none"
+          message_template: "escalate_to_support"
+
+    high:
+      # High: Customers at risk within 14 days
+      success_probability: 0.45
+      actions:
+        card_expired:
+          primary: "update_payment_method"
+          incentive: "none"
+          message_template: "notify_payment_update_required"
+        insufficient_funds:
+          primary: "pause_subscription"
+          incentive: "discount_10pct_on_resume"
+          message_template: "offer_pause_option"
+        gateway_declined:
+          primary: "retry_with_delay"
+          incentive: "discount_5pct"
+          message_template: "notify_payment_failed"
+        unknown:
+          primary: "retry_with_delay"
+          incentive: "discount_5pct"
+          message_template: "notify_payment_failed"
+
+    medium:
+      # Medium: Customers at risk within 30 days
+      success_probability: 0.60
+      actions:
+        card_expired:
+          primary: "notify_payment_update"
+          incentive: "none"
+          message_template: "remind_card_expiry"
+        insufficient_funds:
+          primary: "downgrade_plan"
+          incentive: "discount_pro_bono_month"
+          message_template: "offer_downgrade"
+        gateway_declined:
+          primary: "retry_with_delay"
+          incentive: "none"
+          message_template: "notify_payment_failed"
+        unknown:
+          primary: "retry_with_delay"
+          incentive: "none"
+          message_template: "notify_payment_failed"
+
+    low:
+      # Low: Customers with minor payment friction
+      success_probability: 0.75
+      actions:
+        card_expired:
+          primary: "remind_card_expiry"
+          incentive: "none"
+          message_template: "remind_card_expiry"
+        insufficient_funds:
+          primary: "notify_payment_failed"
+          incentive: "none"
+          message_template: "notify_payment_failed"
+        gateway_declined:
+          primary: "retry_with_delay"
+          incentive: "none"
+          message_template: "notify_payment_failed"
+        unknown:
+          primary: "monitor"
+          incentive: "none"
+          message_template: "monitor_only"
+
+  # Incentive definitions (tunable by risk/customer segment)
+  incentives:
+    discount_5pct:
+      amount: 0.05
+      duration_days: 30
+      description: "5% discount on next billing period"
+    discount_10pct:
+      amount: 0.10
+      duration_days: 30
+      description: "10% discount on next billing period"
+    discount_10pct_on_resume:
+      amount: 0.10
+      duration_days: 30
+      description: "10% discount when subscription resumes"
+    discount_pro_bono_month:
+      amount: 1.0
+      duration_days: 30
+      description: "One free month (100% discount)"
+
+  # Action definitions (propose-only — all outputs are recommendations for human review)
+  actions:
+    update_payment_method:
+      description: "Customer should update their payment method"
+      urgency: "immediate"
+      human_review: true
+    notify_payment_update_required:
+      description: "Send customer notification that payment method update is needed"
+      urgency: "immediate"
+      human_review: true
+    retry_with_delay:
+      description: "Retry payment after 3-5 days delay"
+      urgency: "high"
+      human_review: true
+    manual_triage:
+      description: "Escalate to support team for investigation"
+      urgency: "critical"
+      human_review: true
+    pause_subscription:
+      description: "Offer customer option to pause subscription temporarily"
+      urgency: "high"
+      human_review: true
+    offer_pause_option:
+      description: "Send customer notification offering pause option"
+      urgency: "high"
+      human_review: true
+    downgrade_plan:
+      description: "Recommend downgrading to lower-cost plan"
+      urgency: "medium"
+      human_review: true
+    offer_downgrade:
+      description: "Send customer offer to downgrade to lower-cost plan"
+      urgency: "medium"
+      human_review: true
+    notify_payment_failed:
+      description: "Notify customer that payment attempt failed"
+      urgency: "high"
+      human_review: true
+    remind_card_expiry:
+      description: "Remind customer that card is expiring soon"
+      urgency: "medium"
+      human_review: true
+    monitor:
+      description: "Continue monitoring subscription for payment issues"
+      urgency: "low"
+      human_review: false
+
+# Output format
+# All recommendations are proposal-only — produce Markdown reports for human review
+# Report includes:
+#   - Summary of findings (failed payments, at-risk subscriptions, etc.)
+#   - Risk segmentation table
+#   - Recommended actions per subscription
+#   - Success probability estimates
+#   - Suggested communication templates
+#
+# No direct modifications are made. All actions require human approval.
