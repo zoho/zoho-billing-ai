@@ -1,5 +1,5 @@
 {
-  "name": "zoho-billing-quote-agent",
+  "name": "quote-agent",
   "version": "0.1.0",
   "description": "Accelerate quote closure by analyzing open quotes, ranking by staleness and close value, and recommending next moves (follow-up, discount, convert, or mark lost).",
   "author": {

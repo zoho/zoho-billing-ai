@@ -80,6 +80,30 @@ Each skill is a **self-contained, ready-to-run workflow** defined entirely in a 
 
 ## Quickstart
 
+### For Claude Code CLI Users
+
+Install all agents with one command:
+
+```bash
+bash <(curl -fsSL https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.sh)
+```
+
+Or clone and run locally:
+
+```bash
+git clone https://github.com/zoho/zoho-billing-ai.git
+cd zoho-billing-ai
+bash install.sh
+```
+
+See [INSTALLATION.md](INSTALLATION.md) for detailed setup, configuration, and troubleshooting.
+
+### For Claude Cowork Users
+
+Download `.plugin` files from [Releases](https://github.com/zoho/zoho-billing-ai/releases) and upload them directly to Claude Cowork.
+
+### For Direct Prompt Integration
+
 **1. Clone this repo**
 
 ```bash
@@ -163,16 +187,33 @@ Each skill is a `SKILL.md` file containing the full workflow, MCP tool calls, ed
 ```
 zoho-billing-ai/
 │
+├── install.sh                                    ← Claude Code CLI installer
+├── INSTALLATION.md                               ← Setup guide
 ├── README.md
 ├── LICENSE
 │
-├── skills/                            ← One SKILL.md per use case
+├── skills/                                       ← One SKILL.md per use case
 │   ├── cash-collection-prioritization/SKILL.md
 │   └── country-performance-analysis/SKILL.md
 │
-└── agents/                            ← One README.md per agent
-    ├── subscription-insights/README.md
-    └── retention/README.md
+├── claude/agents/                                ← Claude agents & skills
+│   ├── payment-intelligence-agent/
+│   │   ├── .claude-plugin/plugin.json
+│   │   ├── README.md
+│   │   ├── skills/
+│   │   └── config/
+│   ├── retention-agent/
+│   │   └── ...
+│   └── zoho-billing-quote-agent/
+│       ├── .claude-plugin/plugin.json
+│       ├── README.md
+│       ├── .mcp.json
+│       └── skills/quote-acceleration/
+│
+└── releases/                                     ← Pre-built .plugin files
+    ├── payment-intelligence-agent.plugin
+    ├── retention-agent.plugin
+    └── zoho-billing-quote-agent.plugin
 ```
 
 ---
