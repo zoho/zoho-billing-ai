@@ -82,6 +82,8 @@ Each skill is a **self-contained, ready-to-run workflow** defined entirely in a 
 
 ### For Claude Code CLI Users
 
+**Mac / Linux / Git Bash:**
+
 Install all agents with one command:
 
 ```bash
@@ -95,6 +97,18 @@ git clone https://github.com/zoho/zoho-billing-ai.git
 cd zoho-billing-ai
 bash install.sh
 ```
+
+**Windows (PowerShell):**
+
+```powershell
+# Enable script execution (one-time)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Run installer
+iex (New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.ps1')
+```
+
+For detailed Windows setup, see [WINDOWS_SETUP.md](WINDOWS_SETUP.md).
 
 See [INSTALLATION.md](INSTALLATION.md) for detailed setup, configuration, and troubleshooting.
 

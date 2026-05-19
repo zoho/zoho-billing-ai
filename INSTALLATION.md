@@ -13,19 +13,22 @@ curl -fsSL https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.s
 ### Windows (PowerShell)
 
 ```powershell
-# Enable script execution if needed
+# Enable script execution if needed (run once)
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
-# Download and run
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.sh" `
-  -OutFile "install.sh" ; bash install.sh
+# Run the installer
+iex (New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.ps1')
 ```
+
+**For detailed Windows setup instructions**, see [WINDOWS_SETUP.md](WINDOWS_SETUP.md)
 
 ---
 
 ## Installation Methods
 
 ### Method 1: Automatic Installation (Recommended)
+
+#### Mac / Linux / Git Bash
 
 The `install.sh` script automatically:
 - ✅ Checks prerequisites (Git, Claude Code CLI)
@@ -36,7 +39,7 @@ The `install.sh` script automatically:
 
 **Prerequisites:**
 - Git
-- Claude Code CLI: `npm install -g @anthropic-ai/claude-code`
+- Claude Code CLI
 - Internet connection (for first-time setup)
 
 **Run from terminal:**
@@ -54,9 +57,22 @@ bash install.sh
 bash <(curl -fsSL https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.sh)
 ```
 
+#### Windows (PowerShell)
+
+The `install.ps1` script provides the same functionality with PowerShell. See [WINDOWS_SETUP.md](WINDOWS_SETUP.md) for detailed instructions.
+
+**Quick start:**
+```powershell
+# Enable script execution (one-time)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Run installer
+iex (New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.ps1')
+```
+
 ### Method 2: Manual Installation
 
-If you prefer to install manually:
+#### Mac / Linux / Git Bash
 
 **Step 1:** Clone the repository
 ```bash
@@ -77,7 +93,31 @@ cp -r claude/agents/* ~/.claude/plugins/
 **Step 4:** Verify
 ```bash
 ls ~/.claude/plugins/
-# Should show: payment-intelligence-agent, retention-agent, zoho-billing-quote-agent
+# Should show: payment-intelligence-agent, quote-agent, retention-agent
+```
+
+#### Windows (PowerShell)
+
+**Step 1:** Clone the repository
+```powershell
+git clone https://github.com/zoho/zoho-billing-ai.git
+cd zoho-billing-ai
+```
+
+**Step 2:** Create the plugins directory
+```powershell
+New-Item -ItemType Directory -Path "$env:USERPROFILE\.claude\plugins" -Force
+```
+
+**Step 3:** Copy agents
+```powershell
+Copy-Item -Path "claude/agents/*" -Destination "$env:USERPROFILE\.claude\plugins\" -Recurse
+```
+
+**Step 4:** Verify
+```powershell
+Get-ChildItem -Path "$env:USERPROFILE\.claude\plugins\"
+# Should show: payment-intelligence-agent, quote-agent, retention-agent
 ```
 
 ### Method 3: For Claude Code Users (Cowork)
@@ -126,14 +166,26 @@ Enter these when prompted. They're stored securely in your Claude Code configura
 
 ### Check Plugins Directory
 
+**Mac / Linux:**
 ```bash
 # List installed plugins
 ls -la ~/.claude/plugins/
 
 # Should show:
 # payment-intelligence-agent/
+# quote-agent/
 # retention-agent/
-# zoho-billing-quote-agent/
+```
+
+**Windows (PowerShell):**
+```powershell
+# List installed plugins
+Get-ChildItem -Path "$env:USERPROFILE\.claude\plugins\" -Directory
+
+# Should show:
+# payment-intelligence-agent
+# quote-agent
+# retention-agent
 ```
 
 ### Verify with Claude Code CLI
@@ -259,17 +311,46 @@ git clone https://github.com/zoho/zoho-billing-ai.git
 
 ## Uninstalling
 
-To remove agents:
+### Mac / Linux / Git Bash
 
+Use the provided `uninstall.sh` script:
+
+```bash
+# Interactive mode (shows menu)
+bash uninstall.sh
+
+# Remove specific agent
+bash uninstall.sh -a payment-intelligence-agent
+
+# Remove all agents
+bash uninstall.sh --all
+```
+
+Or manually remove:
 ```bash
 rm -rf ~/.claude/plugins/payment-intelligence-agent
 rm -rf ~/.claude/plugins/retention-agent
-rm -rf ~/.claude/plugins/zoho-billing-quote-agent
+rm -rf ~/.claude/plugins/quote-agent
 ```
 
-Or remove all plugins:
-```bash
-rm -rf ~/.claude/plugins/
+### Windows (PowerShell)
+
+Use the provided `uninstall.ps1` script:
+
+```powershell
+# Interactive mode (shows menu)
+.\uninstall.ps1
+
+# Remove specific agent
+.\uninstall.ps1 -Agent "quote-agent"
+
+# Remove all agents
+.\uninstall.ps1 -All
+```
+
+Or manually remove:
+```powershell
+Remove-Item -Path "$env:USERPROFILE\.claude\plugins\quote-agent" -Recurse -Force
 ```
 
 Then restart Claude Code.
