@@ -30,7 +30,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/zoho/zoho-billing-ai/m
 The `install.sh` script automatically:
 - ✅ Checks prerequisites (Git, Claude Code CLI)
 - ✅ Clones the repo or uses local files
-- ✅ Discovers all agents in `claude/agents/`
+- ✅ Discovers all agents in `claude/plugins/agent-plugins/`
 - ✅ Copies them to `~/.claude/plugins/`
 - ✅ Verifies installation
 
@@ -71,7 +71,7 @@ mkdir -p ~/.claude/plugins
 
 **Step 3:** Copy agents
 ```bash
-cp -r claude/agents/* ~/.claude/plugins/
+cp -r claude/plugins/agent-plugins/* ~/.claude/plugins/
 ```
 
 **Step 4:** Verify
@@ -90,9 +90,9 @@ If you're using **Claude Cowork** instead of Claude Code CLI:
 4. Agents are immediately available
 
 For details, see each agent's README:
-- `claude/agents/payment-intelligence-agent/README.md`
-- `claude/agents/retention-agent/README.md`
-- `claude/agents/zoho-billing-quote-agent/README.md`
+- `claude/plugins/agent-plugins/payment-intelligence-agent/README.md`
+- `claude/plugins/agent-plugins/retention-agent/README.md`
+- `claude/plugins/agent-plugins/zoho-billing-quote-agent/README.md`
 
 ---
 
@@ -158,7 +158,7 @@ If the agent responds, installation is successful! ✅
 ## Available Agents
 
 ### 1. Payment Intelligence Agent
-**Folder:** `claude/agents/payment-intelligence-agent/`
+**Folder:** `claude/plugins/agent-plugins/payment-intelligence-agent/`
 
 **Skills:**
 - **Card Expiry Detector** — Flag cards expiring within 30 days
@@ -172,23 +172,23 @@ If the agent responds, installation is successful! ✅
 - "Which subscriptions are at risk?"
 - "What should I do about at-risk subscriptions?"
 
-**Documentation:** See `claude/agents/payment-intelligence-agent/README.md`
+**Documentation:** See `claude/plugins/agent-plugins/payment-intelligence-agent/README.md`
 
 ---
 
 ### 2. Retention Agent
-**Folder:** `claude/agents/retention-agent/`
+**Folder:** `claude/plugins/agent-plugins/retention-agent/`
 
 **Skills:**
 - Churn analysis and prevention strategies
 - Customer retention recommendations
 
-**Documentation:** See `claude/agents/retention-agent/README.md`
+**Documentation:** See `claude/plugins/agent-plugins/retention-agent/README.md`
 
 ---
 
 ### 3. Quote Acceleration Agent
-**Folder:** `claude/agents/zoho-billing-quote-agent/`
+**Folder:** `claude/plugins/agent-plugins/zoho-billing-quote-agent/`
 
 **Skills:**
 - **Quote Acceleration** — Analyze open quotes, rank by close value, recommend next moves
@@ -201,7 +201,7 @@ If the agent responds, installation is successful! ✅
 - "Quote follow-up list"
 - "Any quotes going cold?"
 
-**Documentation:** See `claude/agents/zoho-billing-quote-agent/README.md`
+**Documentation:** See `claude/plugins/agent-plugins/zoho-billing-quote-agent/README.md`
 
 ---
 
@@ -287,7 +287,7 @@ bash install.sh
 # Option 2: Manual update
 cd zoho-billing-ai
 git pull origin main
-cp -r claude/agents/* ~/.claude/plugins/
+cp -r claude/plugins/agent-plugins/* ~/.claude/plugins/
 ```
 
 ---
@@ -298,7 +298,7 @@ cp -r claude/agents/* ~/.claude/plugins/
 - **Zoho Billing Help:** https://www.zoho.com/billing/help/
 - **Claude Code Docs:** https://docs.anthropic.com/
 
-For issues with specific agents, see their individual README files in `claude/agents/`.
+For issues with specific agents, see their individual README files in `claude/plugins/agent-plugins/`.
 
 ---
 

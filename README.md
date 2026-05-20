@@ -196,7 +196,7 @@ zoho-billing-ai/
 │   ├── cash-collection-prioritization/SKILL.md
 │   └── country-performance-analysis/SKILL.md
 │
-├── claude/agents/                                ← Claude agents & skills
+├── claude/plugins/agent-plugins/                 ← Claude agents & skills
 │   ├── payment-intelligence-agent/
 │   │   ├── .claude-plugin/plugin.json
 │   │   ├── README.md

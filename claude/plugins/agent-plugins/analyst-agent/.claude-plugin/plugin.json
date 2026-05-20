@@ -5,13 +5,6 @@
   "author": {
     "name": "Zoho Billing"
   },
-  "keywords": [
-    "zoho-billing",
-    "analytics",
-    "sales-performance",
-    "collections",
-    "mrr",
-    "churn",
-    "business-health"
-  ]
+  "keywords": ["zoho-billing", "analytics", "sales-performance", "collections", "mrr", "churn", "business-health"],
+  "repository": "https://github.com/zoho/zoho-billing-ai"
 }

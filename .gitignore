@@ -12,4 +12,4 @@ __pycache__/
 
 # Runtime output
 retention-runs/
-claude/agents/**/tests/output/
+claude/plugins/agent-plugins/**/tests/output/
