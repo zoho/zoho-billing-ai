@@ -1,14 +1,12 @@
 # Zoho Billing AI
 
-> **AI-powered skills and agents for Zoho Billing** — query data, automate workflows, and surface insights using Claude, ChatGPT, or Gemini.
+> **AI-powered skills and agents for Zoho Billing** — query data, automate workflows, and surface insights using Claude.
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue?style=flat-square)](LICENSE)
 [![Stars](https://img.shields.io/github/stars/zoho/zoho-billing-ai?style=flat-square)](https://github.com/zoho/zoho-billing-ai/stargazers)
 [![Last commit](https://img.shields.io/github/last-commit/zoho/zoho-billing-ai?style=flat-square)](https://github.com/zoho/zoho-billing-ai/commits/main)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen?style=flat-square)](https://github.com/zoho/zoho-billing-ai/pulls)
 [![Works with Claude](https://img.shields.io/badge/AI-Claude-orange?style=flat-square)](https://claude.ai)
-[![Works with ChatGPT](https://img.shields.io/badge/AI-ChatGPT-green?style=flat-square)](https://chat.openai.com)
-[![Works with Gemini](https://img.shields.io/badge/AI-Gemini-purple?style=flat-square)](https://gemini.google.com)
 
 ---
 
@@ -16,13 +14,13 @@
 
 **Zoho Billing AI** is a collection of **skills and agents** that bring AI into your Zoho Billing workflows. Instead of navigating dashboards, writing scripts, or exporting data — you describe what you need in plain language, and the AI does the rest.
 
-Skills and agents in this repo are built on top of the **[Zoho Billing MCP server](https://github.com/zoho/zoho-billing-mcp)**, which provides the connection between any AI model and your Zoho Billing data. For MCP setup, authentication, and model connection details, refer to the [zoho-billing-mcp](https://github.com/zoho/zoho-billing-mcp) repo.
+Skills and agents in this repo are built on top of the **[Zoho Billing MCP server](https://github.com/zoho/zoho-billing-mcp)**, which provides the connection between Claude and your Zoho Billing data. For MCP setup, authentication, and model connection details, refer to the [zoho-billing-mcp](https://github.com/zoho/zoho-billing-mcp) repo.
 
 ```
 You (natural language)
         │
         ▼
-  AI Model (Claude / ChatGPT / Gemini)
+  Claude
         │
         ▼
   Zoho Billing MCP  ──→  github.com/zoho/zoho-billing-mcp
@@ -66,7 +64,7 @@ Each skill is a **self-contained, ready-to-run workflow** defined entirely in a 
 - **Prompt-driven.** Skills are plain-text files. Anyone who can paste text into an AI assistant can run them.
 - **Action-oriented, not query-only.** Skills process, rank, analyse, and deliver structured outputs — not just raw data retrieval.
 - **Finished workflows over building blocks.** Each skill covers one well-defined job end-to-end.
-- **Model-agnostic.** Works identically with Claude, ChatGPT, or Gemini via the [Zoho Billing MCP](https://github.com/zoho/zoho-billing-mcp).
+- **Built for Claude.** Works with Claude via the [Zoho Billing MCP](https://github.com/zoho/zoho-billing-mcp).
 
 ---
 
@@ -74,11 +72,35 @@ Each skill is a **self-contained, ready-to-run workflow** defined entirely in a 
 
 1. **A Zoho Billing account** with API access enabled
 2. **Zoho Billing MCP** set up and connected — see [zoho/zoho-billing-mcp](https://github.com/zoho/zoho-billing-mcp) for setup instructions
-3. An AI assistant that supports MCP tool use or function calling (Claude, ChatGPT, or Gemini)
+3. **Claude** (Claude Code CLI or Claude Desktop)
 
 ---
 
 ## Quickstart
+
+### For Claude Cowork
+
+#### Step 1 — Configure MCP
+
+1. Get the MCP server URL for Zoho Billing from <a href="https://zoho.com/mcp" target="_blank">zoho.com/mcp</a>.
+2. In Claude Cowork, go to **Customize** → **Add custom connector**, paste the MCP configuration, and authorize it.
+
+#### Step 2 — Upload Plugins
+
+1. Download the `.plugin` files you need from the [Agents Catalog](#agents-catalog) below.
+2. In Claude Cowork, go to **Customize** → click the **+** icon → upload the downloaded `.plugin` files.
+
+#### Step 3 — Start Using
+
+Open a new chat. The skills from your installed plugins are now available — just ask a question.
+
+> **⚠️ Important:** Always include your Zoho Billing **Org ID** in your prompt so the agent can fetch the correct data.
+>
+> ```
+> Show open quotes. Org ID: 1223334444
+> ```
+
+---
 
 ### For Claude Code CLI Users
 
@@ -97,10 +119,6 @@ bash install.sh
 ```
 
 See [INSTALLATION.md](INSTALLATION.md) for detailed setup, configuration, and troubleshooting.
-
-### For Claude Cowork Users
-
-Download `.plugin` files from [Releases](https://github.com/zoho/zoho-billing-ai/releases) and upload them directly to Claude Cowork.
 
 ### For Direct Prompt Integration
 
@@ -132,11 +150,23 @@ Follow the setup in [zoho/zoho-billing-mcp](https://github.com/zoho/zoho-billing
 
 **3. Load a skill and run it**
 
-Pick a skill from the [catalog](#skills-catalog), paste the contents of its `SKILL.md` into your AI assistant's custom instructions (or system prompt), then ask in plain English:
+Pick a skill from the [catalog](#skills-catalog), paste the contents of its `SKILL.md` into Claude's custom instructions (or system prompt), then ask in plain English:
 
 > *"Show me my collections worklist for today."*
 
 The skill takes over from there — MCP tool calls, ranking, formatting, and final answer.
+
+---
+
+## Agents Catalog
+
+Download the `.plugin` file for the agents you need and upload them to Claude Cowork.
+
+| Agent | Description | Download |
+|---|---|---|
+| **Payment Intelligence Agent** | Predict and prevent involuntary churn — card expiry detection, payment failure analysis, dunning risk assessment, and recovery recommendations | [⬇ payment-intelligence-agent.plugin](claude/agents/payment-intelligence-agent/payment-intelligence-agent.plugin) |
+| **Retention Agent** | Pre-churn and win-back retention workflow — cohort building, cancel reason classification, and offer recommendations via a tunable decision matrix | [⬇ retention-agent.plugin](claude/agents/retention-agent/retention-agent.plugin) |
+| **Quote Agent** | Accelerate sales pipeline — analyze open quotes, score staleness, rank by expected close value, and recommend next actions | [⬇ quote-agent.plugin](claude/agents/quote-agent/quote-agent.plugin) |
 
 ---
 
@@ -155,8 +185,8 @@ Each skill is a `SKILL.md` file containing the full workflow, MCP tool calls, ed
 
 ```
 ┌──────────────────────────────────────────┐
-│            Your AI Assistant             │
-│   (Claude / ChatGPT / Gemini)            │
+│            Claude                        │
+│                                          │
 │                                          │
 │  ┌────────────────────────────────────┐  │
 │  │  Skill or Agent Prompt             │  │
@@ -196,24 +226,15 @@ zoho-billing-ai/
 │   ├── cash-collection-prioritization/SKILL.md
 │   └── country-performance-analysis/SKILL.md
 │
-├── claude/agents/                                ← Claude agents & skills
-│   ├── payment-intelligence-agent/
-│   │   ├── .claude-plugin/plugin.json
-│   │   ├── README.md
-│   │   ├── skills/
-│   │   └── config/
-│   ├── retention-agent/
-│   │   └── ...
-│   └── zoho-billing-quote-agent/
-│       ├── .claude-plugin/plugin.json
-│       ├── README.md
-│       ├── .mcp.json
-│       └── skills/quote-acceleration/
-│
-└── releases/                                     ← Pre-built .plugin files
-    ├── payment-intelligence-agent.plugin
-    ├── retention-agent.plugin
-    └── zoho-billing-quote-agent.plugin
+└── claude/agents/                                ← Claude agents & skills
+    ├── payment-intelligence-agent/
+    │   ├── README.md
+    │   ├── skills/
+    │   └── config/
+    ├── retention-agent/
+    │   └── ...
+    └── quote-agent/
+        └── skills/quote-acceleration/
 ```
 
 ---
@@ -233,13 +254,13 @@ zoho-billing-ai/
 ## FAQ
 
 **Do I need to write any code to use these skills?**
-No. Skills are plain prompt files. Paste one into your AI assistant's system prompt and start asking questions.
+No. Skills are plain prompt files. Paste one into Claude's system prompt and start asking questions.
 
-**Why MCP and not a custom integration per AI vendor?**
-MCP (Model Context Protocol) is an open standard. One MCP server works across Claude, ChatGPT, Gemini, and any future model that supports it — so the same skill runs unchanged on any of them.
+**Why MCP?**
+MCP (Model Context Protocol) is an open standard supported by Claude. It provides a clean, structured interface between the AI and Zoho Billing APIs.
 
 **Is my Zoho Billing data sent to the AI vendor?**
-Only the data the AI explicitly fetches through MCP tool calls (e.g., the specific invoices or customer rows it needs to answer your question). The MCP server brokers every call — nothing leaves Zoho without an explicit tool invocation.
+Only the data Claude explicitly fetches through MCP tool calls (e.g., the specific invoices or customer rows it needs to answer your question). The MCP server brokers every call — nothing leaves Zoho without an explicit tool invocation.
 
 **Can I write my own skills?**
 Yes — that's the point. Copy any `SKILL.md` as a template, adjust the workflow, and open a PR. See [Contributing](#contributing) below.
@@ -262,7 +283,7 @@ Contributions are welcome. The easiest way to add value:
 |---|---|
 | [zoho/zoho-billing-mcp](https://github.com/zoho/zoho-billing-mcp) | MCP server for Zoho Billing — setup, authentication, and model connection |
 | [Zoho Billing API Docs](https://www.zoho.com/billing/api/) | Full Zoho Billing API reference |
-| [Model Context Protocol](https://modelcontextprotocol.io) | The open standard behind model-agnostic tool use |
+| [Model Context Protocol](https://modelcontextprotocol.io) | The open standard behind Claude's tool use |
 
 ---
 
@@ -273,5 +294,5 @@ Released under the [Apache License 2.0](LICENSE).
 ---
 
 <p align="center">
-  Powered by <strong><a href="https://github.com/zoho/zoho-billing-mcp">Zoho Billing MCP</a></strong> · Works with <strong>Claude</strong>, <strong>ChatGPT</strong>, and <strong>Gemini</strong>
+  Powered by <strong><a href="https://github.com/zoho/zoho-billing-mcp">Zoho Billing MCP</a></strong> · Works with <strong>Claude</strong>
 </p>

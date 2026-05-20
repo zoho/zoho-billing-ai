@@ -8,7 +8,6 @@ __pycache__/
 
 # Plugin build artifacts
 *.zip
-*.plugin
 
 # Runtime output
 retention-runs/
