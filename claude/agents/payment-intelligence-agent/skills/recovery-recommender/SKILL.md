@@ -1,4 +1,5 @@
 ---
+name: recovery-recommender
 description: Recommends targeted recovery actions for at-risk subscriptions based on failure reason and risk level. Uses decision matrix configuration to tune strategies. Produces propose-only Markdown report for human review.
 ---
 

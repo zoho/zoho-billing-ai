@@ -1,4 +1,5 @@
 ---
+name: quote-acceleration
 description: Analyzes all open quotes, ranks by expected close value, identifies stalled/dead deals using staleness scoring. Recommends next moves (follow-up, discount, convert, mark lost) for human review and execution.
 ---
 

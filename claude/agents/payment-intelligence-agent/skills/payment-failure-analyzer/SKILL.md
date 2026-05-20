@@ -1,4 +1,5 @@
 ---
+name: payment-failure-analyzer
 description: Analyzes payment failures from a date range, categorizes by error type and gateway, identifies systemic issues. Propose-only analysis for human review.
 ---
 

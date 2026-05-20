@@ -1,10 +1,9 @@
 {
   "name": "analyst-agent",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Full-spectrum business analyst for Zoho Billing. Runs three parallel analysis tracks — Sales Performance (invoices, credit notes, item/plan mix), Collection Performance (payments received, refunds, failure rates), and Subscription Growth (MRR, churn, activations by product and country) — then synthesises them into a single business-health scorecard. Read-only; produces Markdown reports for human review.",
   "author": {
-    "name": "Zoho Billing",
-    "email": "support@zohobilling.com"
+    "name": "Zoho Billing"
   },
   "keywords": [
     "zoho-billing",
@@ -14,32 +13,5 @@
     "mrr",
     "churn",
     "business-health"
-  ],
-  "mcps": [
-    {
-      "name": "Zoho-MCP",
-      "command": "npx",
-      "args": ["-y", "@zoho/zoho-billing-mcp"],
-      "env": {
-        "ZOHO_BILLING_ORG_ID": "${ZOHO_BILLING_ORG_ID}",
-        "ZOHO_BILLING_OAUTH_TOKEN": "${ZOHO_BILLING_OAUTH_TOKEN}",
-        "ZOHO_DOMAIN": "${ZOHO_DOMAIN:-zoho.com}"
-      }
-    }
-  ],
-  "requiredEnv": [
-    {
-      "key": "ZOHO_BILLING_ORG_ID",
-      "description": "Your Zoho Billing Organisation ID"
-    },
-    {
-      "key": "ZOHO_BILLING_OAUTH_TOKEN",
-      "description": "OAuth access token with ZohoSubscriptions.reports.READ scope"
-    },
-    {
-      "key": "ZOHO_DOMAIN",
-      "description": "Zoho data-centre domain — zoho.com (default) or zoho.in",
-      "default": "zoho.com"
-    }
   ]
 }
