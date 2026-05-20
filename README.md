@@ -96,6 +96,8 @@ cd zoho-billing-ai
 bash install.sh
 ```
 
+> **Windows users:** Install [Git for Windows](https://git-scm.com/download/win) (includes Git Bash), then use the same commands above.
+
 See [INSTALLATION.md](INSTALLATION.md) for detailed setup, configuration, and troubleshooting.
 
 ### For Claude Cowork Users

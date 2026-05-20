@@ -4,22 +4,13 @@ This guide shows how to install Zoho Billing AI agents for **Claude Code CLI**.
 
 ## Quick Start (One Command)
 
-### Mac / Linux / Git Bash
+### All Platforms (Mac, Linux, Windows)
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.sh | bash
 ```
 
-### Windows (PowerShell)
-
-```powershell
-# Enable script execution if needed
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-
-# Download and run
-Invoke-WebRequest -Uri "https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.sh" `
-  -OutFile "install.sh" ; bash install.sh
-```
+**For Windows users:** Use Git Bash (included with [Git for Windows](https://git-scm.com/download/win)) to run the `.sh` scripts.
 
 ---
 
@@ -36,10 +27,11 @@ The `install.sh` script automatically:
 
 **Prerequisites:**
 - Git
-- Claude Code CLI: `npm install -g @anthropic-ai/claude-code`
+- Claude Code CLI
+- Bash shell (built into Mac/Linux; use Git Bash on Windows)
 - Internet connection (for first-time setup)
 
-**Run from terminal:**
+**Run from terminal/Git Bash:**
 ```bash
 # Clone repo (or use your existing clone)
 git clone https://github.com/zoho/zoho-billing-ai.git
@@ -54,9 +46,9 @@ bash install.sh
 bash <(curl -fsSL https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.sh)
 ```
 
-### Method 2: Manual Installation
+> **Windows users:** Download [Git for Windows](https://git-scm.com/download/win) which includes Git Bash. Right-click in any folder and select "Git Bash Here" to use the same commands above.
 
-If you prefer to install manually:
+### Method 2: Manual Installation
 
 **Step 1:** Clone the repository
 ```bash
@@ -77,8 +69,10 @@ cp -r claude/plugins/agent-plugins/* ~/.claude/plugins/
 **Step 4:** Verify
 ```bash
 ls ~/.claude/plugins/
-# Should show: payment-intelligence-agent, retention-agent, zoho-billing-quote-agent
+# Should show: payment-intelligence-agent, quote-agent, retention-agent
 ```
+
+> **Windows users:** Use Git Bash (from [Git for Windows](https://git-scm.com/download/win)) to run these same commands.
 
 ### Method 3: For Claude Code Users (Cowork)
 
@@ -132,8 +126,8 @@ ls -la ~/.claude/plugins/
 
 # Should show:
 # payment-intelligence-agent/
+# quote-agent/
 # retention-agent/
-# zoho-billing-quote-agent/
 ```
 
 ### Verify with Claude Code CLI
@@ -259,20 +253,29 @@ git clone https://github.com/zoho/zoho-billing-ai.git
 
 ## Uninstalling
 
-To remove agents:
+Use the provided `uninstall.sh` script:
 
+```bash
+# Interactive mode (shows menu)
+bash uninstall.sh
+
+# Remove specific agent
+bash uninstall.sh -a payment-intelligence-agent
+
+# Remove all agents
+bash uninstall.sh --all
+```
+
+Or manually remove:
 ```bash
 rm -rf ~/.claude/plugins/payment-intelligence-agent
 rm -rf ~/.claude/plugins/retention-agent
-rm -rf ~/.claude/plugins/zoho-billing-quote-agent
-```
-
-Or remove all plugins:
-```bash
-rm -rf ~/.claude/plugins/
+rm -rf ~/.claude/plugins/quote-agent
 ```
 
 Then restart Claude Code.
+
+> **Windows users:** Use Git Bash (from [Git for Windows](https://git-scm.com/download/win)) to run these commands.
 
 ---
 
