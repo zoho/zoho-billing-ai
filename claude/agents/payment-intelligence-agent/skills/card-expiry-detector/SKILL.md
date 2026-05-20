@@ -1,4 +1,5 @@
 ---
+name: card-expiry-detector
 description: Flags subscriptions with payment cards expiring within 30 days to enable proactive payment method updates. Propose-only output for human review.
 ---
 

@@ -1,4 +1,5 @@
 ---
+name: dunning-risk-assessor
 description: Identifies subscriptions currently in dunning status or at risk of entering dunning soon, segments by risk level for targeted recovery. Output feeds into decision matrix for recovery strategy recommendations.
 ---
 
