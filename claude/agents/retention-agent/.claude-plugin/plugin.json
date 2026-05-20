@@ -1,10 +1,9 @@
 {
   "name": "retention-agent",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Pre-churn and win-back retention workflow for Zoho Billing. Detects at-risk subscriptions, classifies cancel reasons, applies a tunable YAML decision matrix (LTV x LTD x reason), and produces a propose-only Markdown recommendation report for human review.",
   "author": {
-    "name": "Vishwa Ganesan",
-    "email": "vishwa.ganesan@zohocorp.com"
+    "name": "Zoho Billing"
   },
   "keywords": [
     "zoho-billing",
