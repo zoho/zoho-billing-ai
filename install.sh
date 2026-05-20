@@ -87,7 +87,7 @@ main() {
         SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)" || true
     fi
 
-    if [ -n "$SCRIPT_DIR" ] && [ -d "$SCRIPT_DIR/claude/agents" ]; then
+    if [ -n "$SCRIPT_DIR" ] && [ -d "$SCRIPT_DIR/claude/plugins/agent-plugins" ]; then
         print_info "Installing from local directory..."
         SOURCE_DIR="$SCRIPT_DIR"
     else
@@ -101,12 +101,12 @@ main() {
     fi
 
     # ---- Discover and Install All Agents ----
-    print_info "Installing agents from claude/agents/..."
+    print_info "Installing agents from claude/plugins/agent-plugins/..."
     AGENT_COUNT=0
     FAILED_AGENTS=()
 
-    if [ -d "$SOURCE_DIR/claude/agents" ]; then
-        for agent_dir in "$SOURCE_DIR/claude/agents"/*/; do
+    if [ -d "$SOURCE_DIR/claude/plugins/agent-plugins" ]; then
+        for agent_dir in "$SOURCE_DIR/claude/plugins/agent-plugins"/*/; do
             if [ -d "$agent_dir" ]; then
                 agent_name=$(basename "$agent_dir")
                 target_dir="${PLUGINS_DIR}/${agent_name}"
@@ -131,7 +131,7 @@ main() {
             fi
         done
     else
-        print_warning "No agents directory found at: $SOURCE_DIR/claude/agents"
+        print_warning "No agents directory found at: $SOURCE_DIR/claude/plugins/agent-plugins"
     fi
 
     if [ $AGENT_COUNT -eq 0 ]; then

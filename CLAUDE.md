@@ -6,17 +6,18 @@ Agent plugins and skills for Zoho Billing workflows — built for [Claude Cowork
 
 ```
 claude/
-  agents/                  # Installable plugins — one directory per agent
-    retention-agent/       # Pre-churn & win-back retention workflow
-      .claude-plugin/
-        plugin.json        # Plugin manifest (name, MCPs, requiredEnv)
-      skills/              # Skills bundled with this agent
-      config/              # Tunable YAML config (e.g. decision matrix)
-      tests/               # Fixtures and expected outputs
-      .mcp.json            # MCP server declaration
-      README.md
+  plugins/
+    agent-plugins/         # Installable plugins — one directory per agent
+      retention-agent/     # Pre-churn & win-back retention workflow
+        .claude-plugin/
+          plugin.json      # Plugin manifest (name, MCPs, requiredEnv)
+        skills/            # Skills bundled with this agent
+        config/            # Tunable YAML config (e.g. decision matrix)
+        tests/             # Fixtures and expected outputs
+        .mcp.json          # MCP server declaration
+        README.md
 scripts/
-  build-plugin.sh          # Zip any claude/agents/<slug>/ into a .plugin file
+  build-plugin.sh          # Zip any claude/plugins/agent-plugins/<slug>/ into a .plugin file
 retention-runs/            # Runtime output — gitignored
 ```
 
@@ -32,7 +33,7 @@ claude plugin install retention-agent@zoho-billing-ai
 
 ## Adding a new agent
 
-1. Copy an existing agent folder: `cp -r claude/agents/retention-agent claude/agents/my-new-agent`
+1. Copy an existing agent folder: `cp -r claude/plugins/agent-plugins/retention-agent claude/plugins/agent-plugins/my-new-agent`
 2. Update `.claude-plugin/plugin.json` (name, description, MCPs, requiredEnv)
 3. Replace or add skills under `skills/`
 4. Run `./scripts/build-plugin.sh my-new-agent` to verify it zips cleanly

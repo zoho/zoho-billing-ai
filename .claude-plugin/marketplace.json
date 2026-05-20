@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "analyst-agent",
-      "source": "./claude/agents/analyst-agent/",
+      "source": "./claude/plugins/agent-plugins/analyst-agent/",
       "description": "Full-spectrum business analyst for Zoho Billing. Runs three parallel analysis tracks — Sales Performance, Collection Performance, and Subscription Growth — then synthesises them into a single business-health scorecard. Read-only; produces Markdown reports for human review.",
       "version": "0.1.0",
       "keywords": ["analytics", "sales-performance", "collections", "mrr", "churn", "business-health"],
@@ -16,7 +16,7 @@
     },
     {
       "name": "dunning-agent",
-      "source": "./claude/agents/dunning-agent/",
+      "source": "./claude/plugins/agent-plugins/dunning-agent/",
       "description": "Proactively prevent involuntary churn by analysing subscriptions currently in dunning, grouping them by gateway error code, scoring each by revenue at risk, LTV, lifetime duration, and retry count, and producing a prioritised action report with error-code-specific remediation playbooks for human review.",
       "version": "0.1.0",
       "keywords": ["dunning", "payment-failure", "involuntary-churn", "gateway-error", "ltv", "priority", "recovery"],
@@ -26,7 +26,7 @@
     },
     {
       "name": "payment-intelligence-agent",
-      "source": "./claude/agents/payment-intelligence-agent/",
+      "source": "./claude/plugins/agent-plugins/payment-intelligence-agent/",
       "description": "Predict and prevent involuntary churn by identifying payment failures early and recommending proactive interventions. Customised with a decision matrix for your company's recovery strategies.",
       "version": "0.1.0",
       "keywords": ["payment", "churn", "dunning", "recovery", "decision-matrix"],
@@ -36,7 +36,7 @@
     },
     {
       "name": "quote-agent",
-      "source": "./claude/agents/quote-agent/",
+      "source": "./claude/plugins/agent-plugins/quote-agent/",
       "description": "Accelerate quote closure by analysing open quotes, ranking by staleness and close value, and recommending next moves — follow-up, discount, convert, or mark lost.",
       "version": "0.1.0",
       "keywords": ["quotes", "sales", "pipeline", "acceleration", "staleness"],
@@ -46,7 +46,7 @@
     },
     {
       "name": "recovery-agent",
-      "source": "./claude/agents/recovery-agent/",
+      "source": "./claude/plugins/agent-plugins/recovery-agent/",
       "description": "Signup recovery workflow for Zoho Billing. Fetches the last 7 days of lost opportunities and abandoned carts, ranks them by lost value, applies a tunable decision matrix, and produces a propose-only Markdown recovery action report for human review.",
       "version": "0.1.0",
       "keywords": ["recovery", "abandoned-cart", "lost-opportunities", "signup-recovery", "revenue-recovery"],
@@ -56,7 +56,7 @@
     },
     {
       "name": "retention-agent",
-      "source": "./claude/agents/retention-agent/",
+      "source": "./claude/plugins/agent-plugins/retention-agent/",
       "description": "Pre-churn and win-back retention workflow for Zoho Billing. Detects at-risk subscriptions, classifies cancel reasons, applies a tunable decision matrix (LTV × LTD × reason), and produces a propose-only Markdown recommendation report for human review.",
       "version": "0.1.0",
       "keywords": ["retention", "churn", "win-back", "subscriptions"],

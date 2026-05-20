@@ -14,7 +14,7 @@
 set -e
 
 AGENT="${1:-retention-agent}"
-PLUGIN_SRC="claude/agents/${AGENT}"
+PLUGIN_SRC="claude/plugins/agent-plugins/${AGENT}"
 PLUGIN_OUT="${AGENT}.plugin"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
@@ -22,7 +22,7 @@ cd "$SCRIPT_DIR"
 
 if [ ! -d "$PLUGIN_SRC" ]; then
   echo "❌  Source folder '$PLUGIN_SRC' not found. Run from the repo root."
-  echo "    Available agents: $(ls claude/agents/ 2>/dev/null | tr '\n' ' ')"
+  echo "    Available agents: $(ls claude/plugins/agent-plugins/ 2>/dev/null | tr '\n' ' ')"
   exit 1
 fi
 
