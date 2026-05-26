@@ -6,6 +6,5 @@
     "name": "Zoho Billing"
   },
   "keywords": ["subscription", "quotes", "sales", "pipeline", "acceleration", "staleness"],
-  "repository": "https://github.com/zoho/zoho-billing-ai",
-  "mcpServers": "./.mcp.json"
+  "repository": "https://github.com/zoho/zoho-billing-ai"
 }
