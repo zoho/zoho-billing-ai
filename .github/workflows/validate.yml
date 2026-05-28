@@ -14,7 +14,7 @@ jobs:
 
       - name: Check plugin manifests exist
         run: |
-          for agent_dir in claude/plugins/agent-plugins/*/; do
+          for agent_dir in plugins/agent-plugins/*/; do
             agent=$(basename "$agent_dir")
             manifest="$agent_dir/.claude-plugin/plugin.json"
             if [ ! -f "$manifest" ]; then
@@ -31,7 +31,7 @@ jobs:
           python3 - <<'PYEOF'
           import pathlib, sys
           errors = []
-          for skill in pathlib.Path("claude/plugins/agent-plugins").rglob("SKILL.md"):
+          for skill in pathlib.Path("plugins/agent-plugins").rglob("SKILL.md"):
               content = skill.read_text()
               if not content.startswith("---"):
                   errors.append(f"Missing YAML front-matter: {skill}")
@@ -123,7 +123,7 @@ jobs:
               print("⚠️   .claude-plugin/marketplace.json not found — skipping marketplace checks")
 
           # ── 2. plugin.json per agent ────────────────────────────────────────
-          for manifest in pathlib.Path("claude/plugins/agent-plugins").rglob(".claude-plugin/plugin.json"):
+          for manifest in pathlib.Path("plugins/agent-plugins").rglob(".claude-plugin/plugin.json"):
               data   = json.loads(manifest.read_text())
               label  = str(manifest)
               author = data.get("author", {})
@@ -137,7 +137,7 @@ jobs:
 
           # ── 3. SKILL.md front-matter ────────────────────────────────────────
           FM_RE = re.compile(r"^---\s*\n(.*?)\n---", re.DOTALL)
-          for skill in pathlib.Path("claude/plugins/agent-plugins").rglob("SKILL.md"):
+          for skill in pathlib.Path("plugins/agent-plugins").rglob("SKILL.md"):
               content = skill.read_text()
               m = FM_RE.match(content)
               if not m:
@@ -170,7 +170,7 @@ jobs:
 
       - name: Build each plugin (dry run)
         run: |
-          for agent_dir in claude/plugins/agent-plugins/*/; do
+          for agent_dir in plugins/agent-plugins/*/; do
             agent=$(basename "$agent_dir")
             bash scripts/build-plugin.sh "$agent"
           done

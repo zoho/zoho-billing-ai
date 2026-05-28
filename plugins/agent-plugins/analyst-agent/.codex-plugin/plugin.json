@@ -1,0 +1,10 @@
+{
+  "name": "analyst-agent",
+  "version": "0.1.0",
+  "description": "Full-spectrum business analyst for Zoho Billing. Runs three parallel analysis tracks — Sales Performance (invoices, credit notes, item/plan mix), Collection Performance (payments received, refunds, failure rates), and Subscription Growth (MRR, churn, activations by product and country) — then synthesises them into a single business-health scorecard. Read-only; produces Markdown reports for human review.",
+  "author": {
+    "name": "Zoho Billing"
+  },
+  "keywords": ["zoho-billing", "analytics", "sales-performance", "collections", "mrr", "churn", "business-health"],
+  "repository": "https://github.com/zoho/zoho-billing-ai"
+}

@@ -1,6 +1,6 @@
 # Installation Guide — Zoho Billing AI Agents
 
-This guide shows how to install Zoho Billing AI agents for **Claude Code CLI**.
+This guide shows how to install Zoho Billing AI agents for **Claude Code CLI** and **OpenAI Codex**.
 
 ## Quick Start (One Command)
 
@@ -21,6 +21,14 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/zoho/zoho-billing-ai/m
   -OutFile "install.sh" ; bash install.sh
 ```
 
+### OpenAI Codex — two clicks
+
+Plugins sidebar → **Built by OpenAI** → **Add More** → paste URL → **Add Marketplace**
+```
+https://github.com/zoho/zoho-billing-ai
+```
+Then click **Install** next to each agent. Done.
+
 ---
 
 ## Installation Methods
@@ -30,7 +38,7 @@ Invoke-WebRequest -Uri "https://raw.githubusercontent.com/zoho/zoho-billing-ai/m
 The `install.sh` script automatically:
 - ✅ Checks prerequisites (Git, Claude Code CLI)
 - ✅ Clones the repo or uses local files
-- ✅ Discovers all agents in `claude/plugins/agent-plugins/`
+- ✅ Discovers all agents in `plugins/agent-plugins/`
 - ✅ Copies them to `~/.claude/plugins/`
 - ✅ Verifies installation
 
@@ -71,13 +79,13 @@ mkdir -p ~/.claude/plugins
 
 **Step 3:** Copy agents
 ```bash
-cp -r claude/plugins/agent-plugins/* ~/.claude/plugins/
+cp -r plugins/agent-plugins/* ~/.claude/plugins/
 ```
 
 **Step 4:** Verify
 ```bash
 ls ~/.claude/plugins/
-# Should show: payment-intelligence-agent, retention-agent, zoho-billing-quote-agent
+# Should show: payment-intelligence-agent, retention-agent, quote-agent
 ```
 
 ### Method 3: For Claude Code Users (Cowork)
@@ -90,9 +98,25 @@ If you're using **Claude Cowork** instead of Claude Code CLI:
 4. Agents are immediately available
 
 For details, see each agent's README:
-- `claude/plugins/agent-plugins/payment-intelligence-agent/README.md`
-- `claude/plugins/agent-plugins/retention-agent/README.md`
-- `claude/plugins/agent-plugins/zoho-billing-quote-agent/README.md`
+- `plugins/agent-plugins/payment-intelligence-agent/README.md`
+- `plugins/agent-plugins/retention-agent/README.md`
+- `plugins/agent-plugins/quote-agent/README.md`
+
+---
+
+### Method 4: OpenAI Codex (Desktop App)
+
+**Step 1 — Add the marketplace**
+
+Open Plugins → **Built by OpenAI** → **Add More** → paste the source URL → **Add Marketplace**
+
+```
+https://github.com/zoho/zoho-billing-ai
+```
+
+**Step 2 — Install agents**
+
+Under **Built by OpenAI → Zoho Billing AI**, click **Install** next to each agent you want. Agents are available immediately in your Codex session.
 
 ---
 
@@ -133,7 +157,7 @@ ls -la ~/.claude/plugins/
 # Should show:
 # payment-intelligence-agent/
 # retention-agent/
-# zoho-billing-quote-agent/
+# quote-agent/
 ```
 
 ### Verify with Claude Code CLI
@@ -158,7 +182,7 @@ If the agent responds, installation is successful! ✅
 ## Available Agents
 
 ### 1. Payment Intelligence Agent
-**Folder:** `claude/plugins/agent-plugins/payment-intelligence-agent/`
+**Folder:** `plugins/agent-plugins/payment-intelligence-agent/`
 
 **Skills:**
 - **Card Expiry Detector** — Flag cards expiring within 30 days
@@ -172,23 +196,23 @@ If the agent responds, installation is successful! ✅
 - "Which subscriptions are at risk?"
 - "What should I do about at-risk subscriptions?"
 
-**Documentation:** See `claude/plugins/agent-plugins/payment-intelligence-agent/README.md`
+**Documentation:** See `plugins/agent-plugins/payment-intelligence-agent/README.md`
 
 ---
 
 ### 2. Retention Agent
-**Folder:** `claude/plugins/agent-plugins/retention-agent/`
+**Folder:** `plugins/agent-plugins/retention-agent/`
 
 **Skills:**
 - Churn analysis and prevention strategies
 - Customer retention recommendations
 
-**Documentation:** See `claude/plugins/agent-plugins/retention-agent/README.md`
+**Documentation:** See `plugins/agent-plugins/retention-agent/README.md`
 
 ---
 
 ### 3. Quote Acceleration Agent
-**Folder:** `claude/plugins/agent-plugins/zoho-billing-quote-agent/`
+**Folder:** `plugins/agent-plugins/quote-agent/`
 
 **Skills:**
 - **Quote Acceleration** — Analyze open quotes, rank by close value, recommend next moves
@@ -201,7 +225,7 @@ If the agent responds, installation is successful! ✅
 - "Quote follow-up list"
 - "Any quotes going cold?"
 
-**Documentation:** See `claude/plugins/agent-plugins/zoho-billing-quote-agent/README.md`
+**Documentation:** See `plugins/agent-plugins/quote-agent/README.md`
 
 ---
 
@@ -264,7 +288,7 @@ To remove agents:
 ```bash
 rm -rf ~/.claude/plugins/payment-intelligence-agent
 rm -rf ~/.claude/plugins/retention-agent
-rm -rf ~/.claude/plugins/zoho-billing-quote-agent
+rm -rf ~/.claude/plugins/quote-agent
 ```
 
 Or remove all plugins:
@@ -287,7 +311,7 @@ bash install.sh
 # Option 2: Manual update
 cd zoho-billing-ai
 git pull origin main
-cp -r claude/plugins/agent-plugins/* ~/.claude/plugins/
+cp -r plugins/agent-plugins/* ~/.claude/plugins/
 ```
 
 ---
@@ -298,7 +322,7 @@ cp -r claude/plugins/agent-plugins/* ~/.claude/plugins/
 - **Zoho Billing Help:** https://www.zoho.com/billing/help/
 - **Claude Code Docs:** https://docs.anthropic.com/
 
-For issues with specific agents, see their individual README files in `claude/plugins/agent-plugins/`.
+For issues with specific agents, see their individual README files in `plugins/agent-plugins/`.
 
 ---
 

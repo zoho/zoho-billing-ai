@@ -14,7 +14,7 @@
 set -e
 
 AGENT="${1:-retention-agent}"
-PLUGIN_SRC="claude/plugins/agent-plugins/${AGENT}"
+PLUGIN_SRC="plugins/agent-plugins/${AGENT}"
 PLUGIN_OUT="${AGENT}.plugin"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
@@ -22,7 +22,7 @@ cd "$SCRIPT_DIR"
 
 if [ ! -d "$PLUGIN_SRC" ]; then
   echo "❌  Source folder '$PLUGIN_SRC' not found. Run from the repo root."
-  echo "    Available agents: $(ls claude/plugins/agent-plugins/ 2>/dev/null | tr '\n' ' ')"
+  echo "    Available agents: $(ls plugins/agent-plugins/ 2>/dev/null | tr '\n' ' ')"
   exit 1
 fi
 
@@ -33,14 +33,12 @@ src = pathlib.Path("${PLUGIN_SRC}")
 out = pathlib.Path("${PLUGIN_OUT}")
 
 SKIP = {".DS_Store", "__pycache__", ".pyc", ".git"}
-SKIP_DIRS = {"tests/output"}
 
 added = []
 with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as zf:
     for f in sorted(src.rglob("*")):
         rel = str(f.relative_to(src))
         if any(s in f.parts for s in SKIP): continue
-        if any(rel.startswith(d) for d in SKIP_DIRS): continue
         if f.is_file():
             zf.write(f, rel)
             added.append(rel)

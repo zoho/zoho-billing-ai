@@ -1,0 +1,17 @@
+{
+  "name": "recovery-agent",
+  "version": "0.1.0",
+  "description": "Signup recovery workflow for Zoho Billing. Fetches the last 7 days of lost opportunities and abandoned carts, ranks them by lost value, applies a tunable YAML decision matrix, and produces a propose-only Markdown recovery action report for human review.",
+  "author": {
+    "name": "Zoho Billing"
+  },
+  "keywords": [
+    "zoho-billing",
+    "recovery",
+    "abandoned-cart",
+    "lost-opportunities",
+    "signup-recovery",
+    "revenue-recovery"
+  ],
+  "repository": "https://github.com/zoho/zoho-billing-ai"
+}
