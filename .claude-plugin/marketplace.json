@@ -63,6 +63,16 @@
       "author": {
         "name": "Zoho Billing"
       }
+    },
+    {
+      "name": "revenue-health-analyzer",
+      "source": "./claude/plugins/agent-plugins/revenue-health-analyzer/",
+      "description": "Portfolio-level revenue retention diagnostic for Zoho Billing. Computes Net Revenue Retention banded against industry norms, pulls cohort retention curves, renders a revenue waterfall bridging starting MRR through expansion, contraction, and churn to ending MRR, and surfaces 30/60/90-day renewal exposure. Read-only; produces propose-only Markdown reports for human review.",
+      "version": "0.1.0",
+      "keywords": ["revenue-health", "nrr", "cohort-retention", "revenue-waterfall", "renewal-exposure", "mrr"],
+      "author": {
+        "name": "Zoho Billing"
+      }
     }
   ]
 }
