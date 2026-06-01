@@ -1,0 +1,10 @@
+{
+  "name": "dunning-agent",
+  "version": "0.1.0",
+  "description": "Proactively prevent involuntary churn by analysing subscriptions currently in dunning, grouping them by gateway error code, scoring each by revenue at risk, customer LTV, lifetime duration, and retry count, and producing a prioritised action report with error-code-specific remediation playbooks for human review.",
+  "author": {
+    "name": "Zoho Billing"
+  },
+  "keywords": ["zoho-billing", "dunning", "payment-failure", "involuntary-churn", "gateway-error", "ltv", "priority", "recovery"],
+  "repository": "https://github.com/zoho/zoho-billing-ai"
+}

@@ -98,6 +98,17 @@ bash install.sh
 
 See [INSTALLATION.md](INSTALLATION.md) for detailed setup, configuration, and troubleshooting.
 
+### For OpenAI Codex Users
+
+Install directly from the Codex desktop app — no terminal needed:
+
+1. Open the **Plugins** sidebar in Codex
+2. Scroll to **Built by OpenAI** → click **Add More**
+3. Enter source: `https://github.com/zoho/zoho-billing-ai` → click **Add Marketplace**
+4. Browse the agent list under **Built by OpenAI → Zoho Billing AI** and click **Install**
+
+See [INSTALLATION.md](INSTALLATION.md) for the full step-by-step guide.
+
 ### For Claude Cowork Users
 
 Download `.plugin` files from [Releases](https://github.com/zoho/zoho-billing-ai/releases) and upload them directly to Claude Cowork.
@@ -146,8 +157,9 @@ Each skill is a `SKILL.md` file containing the full workflow, MCP tool calls, ed
 
 | Skill | What it does | Key Zoho APIs used | Trigger phrases |
 |---|---|---|---|
-| [Cash Collection Prioritization](skills/cash-collection-prioritization/SKILL.md) | AR worklist ranked by balance + payment behaviour anomalies | `get_ar_aging`, `get_customer_balances` | *"show me collections"*, *"who should I chase today"* |
-| [Country Performance Analysis](skills/country-performance-analysis/SKILL.md) | Compares subscription activations, cancellations, net growth by country | `get_countrywise_activations_report`, `get_countrywise_cancellations_report` | *"compare countries"*, *"how is each region doing"* |
+| [Cash Collection Prioritization](.claude/skills/cash-collection-prioritization/SKILL.md) | AR worklist ranked by balance + payment behaviour anomalies | `get_ar_aging`, `get_customer_balances` | *"show me collections"*, *"who should I chase today"* |
+| [Country Performance Analysis](.claude/skills/country-performance-analysis/SKILL.md) | Compares subscription activations, cancellations, net growth by country | `get_countrywise_activations_report`, `get_countrywise_cancellations_report` | *"compare countries"*, *"how is each region doing"* |
+| [Overdue Collection Prioritizer](.claude/skills/overdue-collection-prioritizer/SKILL.md) | Daily AR worklist ranked by days overdue × invoice amount with risk adjustments for chronic payers and high-value customers. Outputs percentile-ranked call list with per-invoice action guidance. | `get_ar_aging_details_report` | *"which overdue invoices to pursue"*, *"who should I call today"*, *"prioritize collection efforts"*, *"collections worklist"* |
 
 ---
 
@@ -192,28 +204,29 @@ zoho-billing-ai/
 ├── README.md
 ├── LICENSE
 │
-├── skills/                                       ← One SKILL.md per use case
-│   ├── cash-collection-prioritization/SKILL.md
-│   └── country-performance-analysis/SKILL.md
-│
-├── claude/plugins/agent-plugins/                 ← Claude agents & skills
+├── plugins/agent-plugins/                        ← Agents & skills
 │   ├── payment-intelligence-agent/
 │   │   ├── .claude-plugin/plugin.json
+│   │   ├── .codex-plugin/plugin.json
 │   │   ├── README.md
 │   │   ├── skills/
 │   │   └── config/
 │   ├── retention-agent/
 │   │   └── ...
-│   └── zoho-billing-quote-agent/
+│   ├── dunning-agent/
+│   │   └── ...
+│   ├── recovery-agent/
+│   │   └── ...
+│   ├── analyst-agent/
+│   │   └── ...
+│   └── quote-agent/
 │       ├── .claude-plugin/plugin.json
+│       ├── .codex-plugin/plugin.json
 │       ├── README.md
-│       ├── .mcp.json
 │       └── skills/quote-acceleration/
 │
-└── releases/                                     ← Pre-built .plugin files
-    ├── payment-intelligence-agent.plugin
-    ├── retention-agent.plugin
-    └── zoho-billing-quote-agent.plugin
+└── scripts/
+    └── build-plugin.sh                           ← Zip any agent into a .plugin file
 ```
 
 ---

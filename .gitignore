@@ -10,6 +10,5 @@ __pycache__/
 *.zip
 *.plugin
 
-# Runtime output
+# Runtime output from retention-agent skill runs
 retention-runs/
-claude/plugins/agent-plugins/**/tests/output/
