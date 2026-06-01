@@ -1,0 +1,20 @@
+{
+  "name": "revenue-health-analyzer",
+  "version": "0.1.0",
+  "description": "Portfolio-level revenue retention diagnostic for Zoho Billing. Computes Net Revenue Retention and bands it against industry norms, pulls cohort retention curves, renders a starting-MRR-to-ending-MRR waterfall (expansion / contraction / churn), and surfaces the 30/60/90-day renewal cliff in dollars. Outputs a Red/Yellow/Green retention call plus a propose-only short-list of at-risk renewals worth attention. Read-only; no subscription changes are written back.",
+  "author": {
+    "name": "Zoho Billing"
+  },
+  "keywords": [
+    "zoho-billing",
+    "nrr",
+    "net-revenue-retention",
+    "cohort-analysis",
+    "revenue-waterfall",
+    "renewal-cliff",
+    "retention",
+    "expansion",
+    "contraction"
+  ],
+  "repository": "https://github.com/zoho/zoho-billing-ai"
+}

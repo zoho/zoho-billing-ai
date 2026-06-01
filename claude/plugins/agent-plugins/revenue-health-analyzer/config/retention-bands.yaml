@@ -1,0 +1,99 @@
+# ============================================================
+# Revenue Retention Bands & Thresholds
+# ============================================================
+# This file defines the thresholds the Revenue Health Analyzer
+# applies to interpret Net Revenue Retention, cohort variance,
+# and renewal-exposure scoring. EDIT THIS FILE to tune the
+# agent's behavior — you do not need to change any skill code.
+#
+# Sections:
+#   1. nrr_bands             — Net Revenue Retention thresholds
+#   2. cohort_variance       — flagging cohorts that lag peers
+#   3. renewal_exposure      — risk scoring for upcoming renewals
+#   4. health_call           — rules that map evidence to R / Y / G
+# ============================================================
+
+# ----------------------------------------------------------------
+# 1. NRR bands — Net Revenue Retention thresholds
+# ----------------------------------------------------------------
+# NRR = (starting_mrr + expansion - contraction - churn) / starting_mrr
+# Industry norms used out of the box:
+#   - best_in_class   >= 110%    (compounding revenue, top quartile SaaS)
+#   - healthy         100–110%   (revenue is at least flat after churn)
+#   - leaking         <  100%    (book is contracting net of expansion)
+# Tune these if your benchmark cohort differs (e.g. SMB vs enterprise).
+nrr_bands:
+  best_in_class:  { min_pct: 110 }
+  healthy:        { min_pct: 100, max_pct: 110 }
+  leaking:        { max_pct: 100 }
+
+# ----------------------------------------------------------------
+# 2. Cohort variance — flag weak cohorts
+# ----------------------------------------------------------------
+# A cohort is flagged "weak" when its month-N retention is more than
+# `flag_pct_below_peer_median` percentage points below the median
+# retention of the cohorts acquired in the prior `peer_window_months`.
+# Increase `flag_pct_below_peer_median` to be less sensitive; decrease
+# to surface smaller deviations.
+cohort_variance:
+  peer_window_months: 6
+  flag_pct_below_peer_median: 5     # 5 percentage points
+  min_cohort_size: 10               # ignore tiny cohorts (noise)
+
+# ----------------------------------------------------------------
+# 3. Renewal exposure — scoring upcoming renewals
+# ----------------------------------------------------------------
+# Renewal exposure is split into three buckets — the next 30, 60, and
+# 90 days — and ranked. An upcoming renewal lands on the "at-risk
+# shortlist" when ANY of these conditions are true (OR semantics):
+#
+#   - the subscription is already flagged non-renewing
+#   - the customer has had >= recent_payment_failures in the lookback
+#   - MRR >= high_value_mrr_usd  AND  no payment activity in
+#     last_activity_days
+#
+# Tune to your book size — a 50-person SaaS will use different
+# thresholds than a 5,000-customer one.
+renewal_exposure:
+  windows_days: [30, 60, 90]
+  shortlist_size: 20
+  recent_payment_failures: 2
+  failure_lookback_days: 90
+  high_value_mrr_usd: 500
+  last_activity_days: 60
+
+# ----------------------------------------------------------------
+# 4. Health call — R / Y / G decision
+# ----------------------------------------------------------------
+# Rules are evaluated TOP-TO-BOTTOM. FIRST match wins. Use the
+# catch-all at the bottom so every run gets a call.
+#
+# Available signals:
+#   nrr_band         — best_in_class | healthy | leaking
+#   weak_cohorts     — count of cohorts flagged in section 2
+#   exposure_30d_pct — exposure ($) in next 30 days as % of current MRR
+health_call:
+  - match: { nrr_band: leaking }
+    call: red
+    rationale: "NRR below 100% — the book is contracting net of expansion. Retention erosion is active."
+
+  - match: { exposure_30d_pct_min: 25 }
+    call: red
+    rationale: "More than a quarter of current MRR is up for renewal in 30 days — concentrated renewal-cliff risk."
+
+  - match: { nrr_band: healthy, weak_cohorts_min: 2 }
+    call: yellow
+    rationale: "NRR is healthy but two or more recent cohorts are retaining below peer median — watch for forward-looking drag."
+
+  - match: { weak_cohorts_min: 1 }
+    call: yellow
+    rationale: "At least one cohort retaining below peer median — investigate before it shows up in NRR."
+
+  - match: { nrr_band: best_in_class }
+    call: green
+    rationale: "NRR ≥ 110% and no weak cohorts flagged — best-in-class retention."
+
+  # Catch-all
+  - match: {}
+    call: green
+    rationale: "No retention erosion signals detected this run."
