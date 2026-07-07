@@ -1,6 +1,6 @@
-# Installation Guide — Zoho Billing AI Agents
+# Installation Guide — Zoho Billing AI
 
-This guide shows how to install Zoho Billing AI agents for **Claude Code CLI** and **OpenAI Codex**.
+This guide covers installing Zoho Billing AI agents and skills for **Claude Code CLI**, **Claude Cowork**, and **OpenAI Codex**.
 
 ## Quick Start (One Command)
 
@@ -13,10 +13,7 @@ curl -fsSL https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.s
 ### Windows (PowerShell)
 
 ```powershell
-# Enable script execution if needed
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-
-# Download and run
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.sh" `
   -OutFile "install.sh" ; bash install.sh
 ```
@@ -27,33 +24,27 @@ Plugins sidebar → **Built by OpenAI** → **Add More** → paste URL → **Add
 ```
 https://github.com/zoho/zoho-billing-ai
 ```
-Then click **Install** next to each agent. Done.
+Then click **Install** next to each agent.
 
 ---
 
-## Installation Methods
-
-### Method 1: Automatic Installation (Recommended)
+## Method 1: Automatic Installation (Recommended)
 
 The `install.sh` script automatically:
-- ✅ Checks prerequisites (Git, Claude Code CLI)
-- ✅ Clones the repo or uses local files
-- ✅ Discovers all agents in `plugins/agent-plugins/`
-- ✅ Copies them to `~/.claude/plugins/`
-- ✅ Verifies installation
+- Checks prerequisites (Git, Claude Code CLI)
+- Clones the repo or uses local files
+- Copies all agent plugins to `~/.claude/plugins/`
+- Copies all standalone skills to `~/.claude/skills/`
+- Verifies installation
 
 **Prerequisites:**
 - Git
 - Claude Code CLI: `npm install -g @anthropic-ai/claude-code`
 - Internet connection (for first-time setup)
 
-**Run from terminal:**
 ```bash
-# Clone repo (or use your existing clone)
 git clone https://github.com/zoho/zoho-billing-ai.git
 cd zoho-billing-ai
-
-# Run installer
 bash install.sh
 ```
 
@@ -62,9 +53,9 @@ bash install.sh
 bash <(curl -fsSL https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.sh)
 ```
 
-### Method 2: Manual Installation
+---
 
-If you prefer to install manually:
+## Method 2: Manual Installation
 
 **Step 1:** Clone the repository
 ```bash
@@ -72,39 +63,46 @@ git clone https://github.com/zoho/zoho-billing-ai.git
 cd zoho-billing-ai
 ```
 
-**Step 2:** Create the plugins directory
+**Step 2:** Create directories
 ```bash
 mkdir -p ~/.claude/plugins
+mkdir -p ~/.claude/skills
 ```
 
-**Step 3:** Copy agents
+**Step 3:** Copy agents and skills
 ```bash
 cp -r plugins/agent-plugins/* ~/.claude/plugins/
+cp -r .claude/skills/* ~/.claude/skills/
 ```
 
 **Step 4:** Verify
 ```bash
 ls ~/.claude/plugins/
-# Should show: payment-intelligence-agent, retention-agent, quote-agent
+# analyst-agent  dunning-agent  payment-intelligence-agent  quote-agent  recovery-agent  retention-agent
+
+ls ~/.claude/skills/
+# mrr-growth  customer-360  collections-today  ... (32 skills)
 ```
-
-### Method 3: For Claude Code Users (Cowork)
-
-If you're using **Claude Cowork** instead of Claude Code CLI:
-
-1. Download the `.plugin` file for each agent
-2. Open Claude Cowork
-3. Upload the plugin folder
-4. Agents are immediately available
-
-For details, see each agent's README:
-- `plugins/agent-plugins/payment-intelligence-agent/README.md`
-- `plugins/agent-plugins/retention-agent/README.md`
-- `plugins/agent-plugins/quote-agent/README.md`
 
 ---
 
-### Method 4: OpenAI Codex (Desktop App)
+## Method 3: Claude Cowork
+
+1. Download the `.plugin` file for each agent from [Releases](https://github.com/zoho/zoho-billing-ai/releases)
+2. Open Claude Cowork → Settings → Plugins → Add Plugin
+3. Upload the `.plugin` file
+
+For all agents:
+- `analyst-agent.plugin`
+- `dunning-agent.plugin`
+- `payment-intelligence-agent.plugin`
+- `quote-agent.plugin`
+- `recovery-agent.plugin`
+- `retention-agent.plugin`
+
+---
+
+## Method 4: OpenAI Codex (Desktop App)
 
 **Step 1 — Add the marketplace**
 
@@ -116,259 +114,190 @@ https://github.com/zoho/zoho-billing-ai
 
 **Step 2 — Install agents**
 
-Under **Built by OpenAI → Zoho Billing AI**, click **Install** next to each agent you want. Agents are available immediately in your Codex session.
+Under **Built by OpenAI → Zoho Billing AI**, click **Install** next to each agent.
 
 ---
 
 ## Configuration
 
-Each agent requires Zoho Billing credentials to function.
+Each agent requires Zoho Billing credentials.
 
 ### Get Your Credentials
 
-1. **Organization ID:**
-   - Log in to Zoho Billing
-   - Settings → Organization
-   - Copy the Organization ID
+1. **Organization ID:** Zoho Billing → Settings → Organization → copy Organization ID
+2. **OAuth Token / API Key:** Zoho Billing → Settings → API Connections → create key
 
-2. **API Key:**
-   - Zoho Billing → Settings → API Connections
-   - Create a new API Key
-   - Copy and store securely
+### MCP Server Setup
 
-### Configure Agents
+Zoho Billing AI uses the [Zoho Billing MCP server](https://github.com/zoho/zoho-billing-mcp). Add it to your Claude Desktop or Claude Code MCP config:
 
-When you first run an agent command, Claude Code CLI will prompt for:
-- **Organization ID**
-- **API Key**
-
-Enter these when prompted. They're stored securely in your Claude Code configuration.
+```json
+{
+  "mcpServers": {
+    "zoho-billing": {
+      "command": "npx",
+      "args": ["-y", "@zoho/zoho-billing-mcp"],
+      "env": {
+        "ZOHO_BILLING_ORG_ID": "your-org-id",
+        "ZOHO_BILLING_OAUTH_TOKEN": "your-oauth-token"
+      }
+    }
+  }
+}
+```
 
 ---
 
 ## Verifying Installation
 
-### Check Plugins Directory
+### Check directories
 
 ```bash
-# List installed plugins
 ls -la ~/.claude/plugins/
-
-# Should show:
-# payment-intelligence-agent/
-# retention-agent/
-# quote-agent/
-```
-
-### Verify with Claude Code CLI
-
-```bash
-# Check if Claude Code CLI can see the plugins
-claude status
+ls -la ~/.claude/skills/
 ```
 
 ### Test in Claude Code
 
-1. Open Claude Code
-2. Try a trigger phrase from any agent:
-   - "Check for cards expiring soon"
-   - "Show me open quotes"
-   - "Which subscriptions are at risk?"
+Try these trigger phrases:
 
-If the agent responds, installation is successful! ✅
+```
+/mrr-growth
+/collections-today
+/customer-360 Acme Corp
+/subscription-kpis
+```
+
+If the skill responds with data from Zoho Billing, installation is successful.
 
 ---
 
 ## Available Agents
 
-### 1. Payment Intelligence Agent
-**Folder:** `plugins/agent-plugins/payment-intelligence-agent/`
+### analyst-agent
+Full-spectrum business analyst — sales performance, collections dashboard, subscription growth scorecard, and country-by-country breakdown.
 
-**Skills:**
-- **Card Expiry Detector** — Flag cards expiring within 30 days
-- **Payment Failure Analyzer** — Analyze recent payment failures
-- **Dunning Risk Assessor** — Identify at-risk subscriptions
-- **Recovery Recommender** — Get recovery strategies
+### dunning-agent
+Analyses subscriptions currently in dunning retry. Scores by MRR at risk, shows retry count and next retry date, and produces a prioritised remediation report.
 
-**Trigger Phrases:**
+### payment-intelligence-agent
+Predict and prevent involuntary churn. Skills: card expiry detector, payment failure analyser, dunning risk assessor, recovery recommender.
+
+**Trigger phrases:**
 - "Check for cards expiring soon"
-- "Analyze recent payment failures"
+- "Analyse recent payment failures"
 - "Which subscriptions are at risk?"
-- "What should I do about at-risk subscriptions?"
 
-**Documentation:** See `plugins/agent-plugins/payment-intelligence-agent/README.md`
+### quote-agent
+Rank open quotes by staleness and expected close value. Recommends next move per quote (follow-up, call, concession, mark lost).
 
----
-
-### 2. Retention Agent
-**Folder:** `plugins/agent-plugins/retention-agent/`
-
-**Skills:**
-- Churn analysis and prevention strategies
-- Customer retention recommendations
-
-**Documentation:** See `plugins/agent-plugins/retention-agent/README.md`
-
----
-
-### 3. Quote Acceleration Agent
-**Folder:** `plugins/agent-plugins/quote-agent/`
-
-**Skills:**
-- **Quote Acceleration** — Analyze open quotes, rank by close value, recommend next moves
-
-**Trigger Phrases:**
+**Trigger phrases:**
 - "Show me open quotes"
 - "Which deals are stalling?"
-- "Prioritize quotes for today"
-- "What should sales work on today?"
-- "Quote follow-up list"
-- "Any quotes going cold?"
+- "Prioritise quotes for today"
 
-**Documentation:** See `plugins/agent-plugins/quote-agent/README.md`
+### recovery-agent
+Signup recovery — surfaces lost opportunities and abandoned carts ranked by lost revenue. Recommends re-engagement actions.
+
+### retention-agent
+Pre-churn and win-back. Detects at-risk subscriptions, classifies cancel reasons, and recommends retention offers.
 
 ---
 
 ## Troubleshooting
 
 ### "Claude Code CLI not found"
-
-Install it globally:
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
 
 ### "Permission denied" on install.sh
-
-Make it executable:
 ```bash
 chmod +x install.sh
 bash install.sh
 ```
 
-### Agents not showing in Claude Code
+### Skills not responding in Claude Code
 
-1. **Verify installation:**
-   ```bash
-   ls ~/.claude/plugins/
-   ```
-
-2. **Reload Claude Code** — Close and reopen it
-
-3. **Check plugin.json files** are valid:
-   ```bash
-   cat ~/.claude/plugins/payment-intelligence-agent/.claude-plugin/plugin.json
-   ```
+1. Verify skills are installed: `ls ~/.claude/skills/`
+2. Reload Claude Code (close and reopen)
+3. Confirm the MCP server is connected and authenticated
 
 ### "Organization ID or API Key not working"
 
-1. Verify credentials are correct in Zoho Billing
-2. Ensure API key has necessary permissions
-3. Try creating a new API key
+1. Verify credentials are correct in Zoho Billing → Settings
+2. Ensure the API key has the necessary scopes (subscriptions, invoices, reports)
+3. Try generating a fresh OAuth token
 
 ### Installation fails on clone
 
-Check your internet connection and GitHub access:
+Check internet connection and GitHub access:
 ```bash
 git clone https://github.com/zoho/zoho-billing-ai.git
 ```
-
-### Agents work in Cowork but not in Claude Code CLI
-
-- Claude Code CLI requires separate installation (via `install.sh`)
-- Cowork uses plugin upload (`.plugin` files)
-- Both are supported, but configurations are separate
 
 ---
 
 ## Uninstalling
 
-To remove agents:
-
+Remove agents:
 ```bash
+rm -rf ~/.claude/plugins/analyst-agent
+rm -rf ~/.claude/plugins/dunning-agent
 rm -rf ~/.claude/plugins/payment-intelligence-agent
-rm -rf ~/.claude/plugins/retention-agent
 rm -rf ~/.claude/plugins/quote-agent
+rm -rf ~/.claude/plugins/recovery-agent
+rm -rf ~/.claude/plugins/retention-agent
 ```
 
-Or remove all plugins:
+Remove all standalone skills:
 ```bash
-rm -rf ~/.claude/plugins/
+rm -rf ~/.claude/skills/
+```
+
+Or remove everything:
+```bash
+rm -rf ~/.claude/plugins/ ~/.claude/skills/
 ```
 
 Then restart Claude Code.
 
 ---
 
-## Updating Agents
-
-To get the latest agent versions:
+## Updating
 
 ```bash
-# Option 1: Re-run installer (overwrites old versions)
+# Re-run installer (overwrites old versions)
 bash install.sh
 
-# Option 2: Manual update
+# Or manual update
 cd zoho-billing-ai
 git pull origin main
 cp -r plugins/agent-plugins/* ~/.claude/plugins/
+cp -r .claude/skills/* ~/.claude/skills/
 ```
-
----
-
-## Support & Documentation
-
-- **GitHub:** https://github.com/zoho/zoho-billing-ai
-- **Zoho Billing Help:** https://www.zoho.com/billing/help/
-- **Claude Code Docs:** https://docs.anthropic.com/
-
-For issues with specific agents, see their individual README files in `plugins/agent-plugins/`.
 
 ---
 
 ## Advanced Configuration
 
-### Using a Proxy or VPN
-
-If you're behind a corporate proxy, set the `https_proxy` environment variable:
+### Using a proxy
 
 ```bash
 export https_proxy=http://proxy.example.com:8080
 bash install.sh
 ```
 
-### Custom Installation Directory
+### Offline installation
 
-By default, agents install to `~/.claude/plugins/`. To use a custom location, edit `install.sh`:
-
-```bash
-PLUGINS_DIR="${HOME}/.claude/plugins"  # Change this line
-```
-
-Then run:
-```bash
-bash install.sh
-```
-
-### Offline Installation
-
-If you don't have internet access:
-
-1. Clone repo on a machine with internet:
-   ```bash
-   git clone https://github.com/zoho/zoho-billing-ai.git
-   ```
-
+1. Clone repo on a machine with internet access
 2. Transfer the folder to your offline machine
-
-3. Run installer locally:
-   ```bash
-   cd zoho-billing-ai
-   bash install.sh
-   ```
-
-The installer detects the local clone and skips GitHub access.
+3. Run `bash install.sh` — the script detects the local clone and skips GitHub
 
 ---
 
-**Ready to go!** 🚀 Open Claude Code and start using your Zoho Billing agents.
+## Support
+
+- **GitHub:** https://github.com/zoho/zoho-billing-ai
+- **Zoho Billing Help:** https://www.zoho.com/billing/help/
+- **MCP server issues:** https://github.com/zoho/zoho-billing-mcp

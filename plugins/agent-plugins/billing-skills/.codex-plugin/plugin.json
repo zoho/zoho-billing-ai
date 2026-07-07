@@ -1,0 +1,14 @@
+{
+  "name": "billing-skills",
+  "version": "0.1.0",
+  "description": "22 standalone skills for Zoho Billing — MRR/ARR/NRR analytics, AR collections, invoice investigation, churn analysis, trial monitoring, payment failure diagnosis, and more. Each skill is a single-task workflow invoked directly as /billing-skills:skill-name.",
+  "author": {
+    "name": "Zoho Billing"
+  },
+  "keywords": [
+    "zoho-billing", "mrr", "arr", "nrr", "churn", "collections", "invoices",
+    "dunning", "trials", "payment-failure", "refunds", "revenue-recognition",
+    "expansion", "quotes", "analytics", "skills"
+  ],
+  "repository": "https://github.com/zoho/zoho-billing-ai"
+}

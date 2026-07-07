@@ -16,7 +16,7 @@
 
 **Zoho Billing AI** is a collection of **skills and agents** that bring AI into your Zoho Billing workflows. Instead of navigating dashboards, writing scripts, or exporting data — you describe what you need in plain language, and the AI does the rest.
 
-Skills and agents in this repo are built on top of the **[Zoho Billing MCP server](https://github.com/zoho/zoho-billing-mcp)**, which provides the connection between any AI model and your Zoho Billing data. For MCP setup, authentication, and model connection details, refer to the [zoho-billing-mcp](https://github.com/zoho/zoho-billing-mcp) repo.
+Skills and agents in this repo are built on top of the **[Zoho Billing MCP server](https://github.com/zoho/zoho-billing-mcp)**, which provides the connection between any AI model and your Zoho Billing data.
 
 ```
 You (natural language)
@@ -40,19 +40,20 @@ You (natural language)
 
 > *"Who should I chase for payments today?"*
 
-**The Cash Collection Prioritization skill responds:**
+**The Collections skill responds:**
 
 ```
-Top 5 collection priorities — 13 May 2026
+Collections Worklist — 29 Jun 2026
 ────────────────────────────────────────────
-1. Acme Corp           $48,200   92 days overdue   ↓ payment cadence slipping
-2. Northwind Traders   $31,500   45 days overdue   ↓ first miss in 14 months
-3. Globex Industries   $22,750   67 days overdue   → consistent late payer
-4. Initech LLC         $18,300   31 days overdue   ↑ partial payment received
-5. Soylent Co.         $12,900   58 days overdue   ↓ no contact in 21 days
+ #  Customer             Outstanding   Days     Score   Action
+────────────────────────────────────────────
+ 1  Acme Corp            $48,200       92d      94      ⚠ Escalate
+ 2  Northwind Traders    $31,500       45d      78      📞 Phone call
+ 3  Globex Industries    $22,750       67d      71      📧 Email + link
+ 4  Initech LLC          $18,300       31d      52      📧 Email
+ 5  Soylent Co.          $12,900       58d      49      📧 Email
 
 Total at-risk AR: $133,650 across 5 accounts
-Suggested actions: dunning email (3), phone outreach (2)
 ```
 
 No dashboards. No SQL. No exports. Just a question.
@@ -61,7 +62,7 @@ No dashboards. No SQL. No exports. Just a question.
 
 ## What makes this different
 
-Each skill is a **self-contained, ready-to-run workflow** defined entirely in a prompt file. Plug it into your AI assistant and start using it immediately — no SDK, no deployment, no custom code.
+Each skill is a **self-contained, ready-to-run workflow** defined entirely in a prompt file. Plug it into your AI assistant and start using it — no SDK, no deployment, no custom code.
 
 - **Prompt-driven.** Skills are plain-text files. Anyone who can paste text into an AI assistant can run them.
 - **Action-oriented, not query-only.** Skills process, rank, analyse, and deliver structured outputs — not just raw data retrieval.
@@ -73,16 +74,16 @@ Each skill is a **self-contained, ready-to-run workflow** defined entirely in a 
 ## Prerequisites
 
 1. **A Zoho Billing account** with API access enabled
-2. **Zoho Billing MCP** set up and connected — see [zoho/zoho-billing-mcp](https://github.com/zoho/zoho-billing-mcp) for setup instructions
-3. An AI assistant that supports MCP tool use or function calling (Claude, ChatGPT, or Gemini)
+2. **Zoho Billing MCP** set up and connected — see [zoho/zoho-billing-mcp](https://github.com/zoho/zoho-billing-mcp) for setup
+3. An AI assistant that supports MCP tool use (Claude, ChatGPT, or Gemini)
 
 ---
 
 ## Quickstart
 
-### For Claude Code CLI Users
+### Claude Code CLI
 
-Install all agents with one command:
+Install all agents and skills with one command:
 
 ```bash
 bash <(curl -fsSL https://raw.githubusercontent.com/zoho/zoho-billing-ai/main/install.sh)
@@ -96,70 +97,92 @@ cd zoho-billing-ai
 bash install.sh
 ```
 
-See [INSTALLATION.md](INSTALLATION.md) for detailed setup, configuration, and troubleshooting.
+Then invoke a skill directly in Claude Code:
 
-### For OpenAI Codex Users
+```
+/mrr-growth
+/collections-today
+/customer-360 Acme Corp
+```
+
+See [INSTALLATION.md](INSTALLATION.md) for full setup, configuration, and troubleshooting.
+
+### OpenAI Codex
 
 Install directly from the Codex desktop app — no terminal needed:
 
 1. Open the **Plugins** sidebar in Codex
 2. Scroll to **Built by OpenAI** → click **Add More**
 3. Enter source: `https://github.com/zoho/zoho-billing-ai` → click **Add Marketplace**
-4. Browse the agent list under **Built by OpenAI → Zoho Billing AI** and click **Install**
+4. Browse the agent list and click **Install**
 
-See [INSTALLATION.md](INSTALLATION.md) for the full step-by-step guide.
-
-### For Claude Cowork Users
+### Claude Cowork
 
 Download `.plugin` files from [Releases](https://github.com/zoho/zoho-billing-ai/releases) and upload them directly to Claude Cowork.
 
-### For Direct Prompt Integration
+### Direct Prompt Integration
 
-**1. Clone this repo**
-
-```bash
-git clone https://github.com/zoho/zoho-billing-ai.git
-cd zoho-billing-ai
-```
-
-**2. Connect Zoho Billing MCP to your AI assistant**
-
-Follow the setup in [zoho/zoho-billing-mcp](https://github.com/zoho/zoho-billing-mcp). A typical Claude Desktop config looks like:
-
-```json
-{
-  "mcpServers": {
-    "zoho-billing": {
-      "command": "npx",
-      "args": ["-y", "@zoho/zoho-billing-mcp"],
-      "env": {
-        "ZOHO_BILLING_ORG_ID": "your-org-id",
-        "ZOHO_BILLING_OAUTH_TOKEN": "your-oauth-token"
-      }
-    }
-  }
-}
-```
-
-**3. Load a skill and run it**
-
-Pick a skill from the [catalog](#skills-catalog), paste the contents of its `SKILL.md` into your AI assistant's custom instructions (or system prompt), then ask in plain English:
-
-> *"Show me my collections worklist for today."*
-
-The skill takes over from there — MCP tool calls, ranking, formatting, and final answer.
+1. Clone this repo
+2. Connect [Zoho Billing MCP](https://github.com/zoho/zoho-billing-mcp) to your AI assistant
+3. Paste the contents of any `SKILL.md` into your system prompt and ask in plain English
 
 ---
 
 ## Skills Catalog
 
-Each skill is a `SKILL.md` file containing the full workflow, MCP tool calls, edge cases, and expected output. Click through to the skill file for complete details.
+Skills live under `.claude/skills/<name>/SKILL.md` and are invoked as `/skill-name` in Claude Code.
 
-| Skill | What it does | Key Zoho APIs used | Trigger phrases |
-|---|---|---|---|
-| [Cash Collection Prioritization](.claude/skills/cash-collection-prioritization/SKILL.md) | AR worklist ranked by balance + payment behaviour anomalies | `get_ar_aging`, `get_customer_balances` | *"show me collections"*, *"who should I chase today"* |
-| [Country Performance Analysis](.claude/skills/country-performance-analysis/SKILL.md) | Compares subscription activations, cancellations, net growth by country | `get_countrywise_activations_report`, `get_countrywise_cancellations_report` | *"compare countries"*, *"how is each region doing"* |
-| [Overdue Collection Prioritizer](.claude/skills/overdue-collection-prioritizer/SKILL.md) | Daily AR worklist ranked by days overdue × invoice amount with risk adjustments for chronic payers and high-value customers. Outputs percentile-ranked call list with per-invoice action guidance. | `get_ar_aging_details_report` | *"which overdue invoices to pursue"*, *"who should I call today"*, *"prioritize collection efforts"*, *"collections worklist"* |
+### Analytics & Revenue
+
+| Skill | What it does | Invoke |
+|---|---|---|
+| [mrr-growth](.claude/skills/mrr-growth/SKILL.md) | MRR waterfall: new, expansion, reactivation, contraction, churn | `/mrr-growth` |
+| [arr-snapshot](.claude/skills/arr-snapshot/SKILL.md) | ARR with gross vs net, QoQ/YoY trend, trajectory classification | `/arr-snapshot` |
+| [nrr-check](.claude/skills/nrr-check/SKILL.md) | Net Revenue Retention vs SaaS benchmarks + cohort heatmap | `/nrr-check` |
+| [mrr-quick-ratio](.claude/skills/mrr-quick-ratio/SKILL.md) | Growth quality: (new + expansion) / (contraction + churn) | `/mrr-quick-ratio` |
+| [churn-breakdown](.claude/skills/churn-breakdown/SKILL.md) | Voluntary vs involuntary churn decomposition by product | `/churn-breakdown` |
+| [subscription-kpis](.claude/skills/subscription-kpis/SKILL.md) | Weekly/monthly digest: MRR, ARR, activations, churn rate, NRR | `/subscription-kpis` |
+| [refund-analysis](.claude/skills/refund-analysis/SKILL.md) | Refund anomalies: product spikes, country spikes, repeat-refunders | `/refund-analysis` |
+| [revenue-recognition-health](.claude/skills/revenue-recognition-health/SKILL.md) | ASC 606 / IFRS 15 health: deferred vs recognized, month-end checklist | `/revenue-recognition-health` |
+| [expansion-opportunities](.claude/skills/expansion-opportunities/SKILL.md) | Customers who've outgrown their plan — ranked by expansion MRR potential | `/expansion-opportunities` |
+| [quote-prioritizer](.claude/skills/quote-prioritizer/SKILL.md) | Open quotes ranked by staleness score and expected close value | `/quote-prioritizer` |
+
+### Operational Lookups
+
+| Skill | What it does | Invoke |
+|---|---|---|
+| [invoice-aging](.claude/skills/invoice-aging/SKILL.md) | All overdue invoices in aging buckets (0-30, 31-60, 61-90, 90+) | `/invoice-aging` |
+| [dunning-queue](.claude/skills/dunning-queue/SKILL.md) | PAST_DUE and UNPAID subscriptions ranked by MRR | `/dunning-queue` |
+| [trials-expiring](.claude/skills/trials-expiring/SKILL.md) | Active trials sorted by expiry date, marks ≤3 days urgent | `/trials-expiring [days]` |
+| [catalog-browser](.claude/skills/catalog-browser/SKILL.md) | All products, plans, addons, and items with pricing | `/catalog-browser` |
+| [renewals-this-week](.claude/skills/renewals-this-week/SKILL.md) | Upcoming renewals with motion: pitch annual / upgrade / save-call | `/renewals-this-week [days]` |
+
+### Investigation & Diagnosis
+
+| Skill | What it does | Invoke |
+|---|---|---|
+| [invoice-investigator](.claude/skills/invoice-investigator/SKILL.md) | Full invoice timeline: charges, payments, gaps — answers "did they pay?" | `/invoice-investigator [INV-# or customer]` |
+| [payment-failure-diagnosis](.claude/skills/payment-failure-diagnosis/SKILL.md) | Maps gateway error codes to plain English + fix playbook | `/payment-failure-diagnosis [customer]` |
+| [subscription-lookup](.claude/skills/subscription-lookup/SKILL.md) | Full subscription lifecycle + last 6 invoices and payments | `/subscription-lookup [SUB-# or customer]` |
+| [collections-today](.claude/skills/collections-today/SKILL.md) | AR worklist ranked by recovery score (balance × pay probability) | `/collections-today` |
+| [card-expiry-risk](.claude/skills/card-expiry-risk/SKILL.md) | Cards expiring in 30/60 days ranked by MRR at risk | `/card-expiry-risk` |
+| [trial-pulse](.claude/skills/trial-pulse/SKILL.md) | Conversion likelihood score per trial + nudge recommendation | `/trial-pulse` |
+| [bad-debt-risk](.claude/skills/bad-debt-risk/SKILL.md) | Write-off risk scoring — surfaces AR still saveable | `/bad-debt-risk` |
+
+---
+
+## Agent Plugins
+
+For more complex, multi-step workflows, use the installable agent plugins:
+
+| Agent | Description | Platform |
+|---|---|---|
+| [analyst-agent](plugins/agent-plugins/analyst-agent/) | Full-spectrum business analyst — sales, collections, subscription scorecard | Claude + Codex |
+| [dunning-agent](plugins/agent-plugins/dunning-agent/) | Analyse dunning subscriptions, score by MRR at risk, remediation report | Claude + Codex |
+| [payment-intelligence-agent](plugins/agent-plugins/payment-intelligence-agent/) | Predict and prevent involuntary churn via payment failure analysis | Claude + Codex |
+| [quote-agent](plugins/agent-plugins/quote-agent/) | Rank open quotes by staleness and close value, recommend next moves | Claude + Codex |
+| [recovery-agent](plugins/agent-plugins/recovery-agent/) | Signup recovery — lost opportunities and abandoned carts | Claude + Codex |
+| [retention-agent](plugins/agent-plugins/retention-agent/) | Pre-churn and win-back — detect at-risk subscriptions, recommend offers | Claude + Codex |
 
 ---
 
@@ -172,7 +195,7 @@ Each skill is a `SKILL.md` file containing the full workflow, MCP tool calls, ed
 │                                          │
 │  ┌────────────────────────────────────┐  │
 │  │  Skill or Agent Prompt             │  │
-│  │  (any SKILL.md / agent README)     │  │
+│  │  (SKILL.md / agent plugin)         │  │
 │  └────────────────┬───────────────────┘  │
 └───────────────────┼──────────────────────┘
                     │  Tool calls (MCP)
@@ -194,77 +217,26 @@ Each skill is a `SKILL.md` file containing the full workflow, MCP tool calls, ed
 
 ---
 
-## Repository Structure
-
-```
-zoho-billing-ai/
-│
-├── install.sh                                    ← Claude Code CLI installer
-├── INSTALLATION.md                               ← Setup guide
-├── README.md
-├── LICENSE
-│
-├── plugins/agent-plugins/                        ← Agents & skills
-│   ├── payment-intelligence-agent/
-│   │   ├── .claude-plugin/plugin.json
-│   │   ├── .codex-plugin/plugin.json
-│   │   ├── README.md
-│   │   ├── skills/
-│   │   └── config/
-│   ├── retention-agent/
-│   │   └── ...
-│   ├── dunning-agent/
-│   │   └── ...
-│   ├── recovery-agent/
-│   │   └── ...
-│   ├── analyst-agent/
-│   │   └── ...
-│   └── quote-agent/
-│       ├── .claude-plugin/plugin.json
-│       ├── .codex-plugin/plugin.json
-│       ├── README.md
-│       └── skills/quote-acceleration/
-│
-└── scripts/
-    └── build-plugin.sh                           ← Zip any agent into a .plugin file
-```
-
----
-
-## Roadmap
-
-**Skills in progress**
-- [ ] **Salesperson Performance** — analyse subscription activations, revenue contribution, and conversion rates by salesperson over a selected period
-- [ ] **Quote Follow-up Prioritization** — rank open quotes by value, age, and customer engagement signals to surface which ones need follow-up first
-
-**Agents in progress**
-- [ ] **Subscription Insights Agent** — monthly summary of activations, MRR, active subscriptions, and churn rate
-- [ ] **Retention Agent** — sends retention emails to customers based on LTV, LTD, and the company's retention policy
-
----
-
 ## FAQ
 
 **Do I need to write any code to use these skills?**
-No. Skills are plain prompt files. Paste one into your AI assistant's system prompt and start asking questions.
+No. Skills are plain prompt files. Install them and start asking questions in plain English.
 
 **Why MCP and not a custom integration per AI vendor?**
-MCP (Model Context Protocol) is an open standard. One MCP server works across Claude, ChatGPT, Gemini, and any future model that supports it — so the same skill runs unchanged on any of them.
+MCP (Model Context Protocol) is an open standard. One MCP server works across Claude, ChatGPT, Gemini, and any future model that supports it.
 
 **Is my Zoho Billing data sent to the AI vendor?**
-Only the data the AI explicitly fetches through MCP tool calls (e.g., the specific invoices or customer rows it needs to answer your question). The MCP server brokers every call — nothing leaves Zoho without an explicit tool invocation.
+Only the data the AI explicitly fetches through MCP tool calls. The MCP server brokers every call — nothing leaves Zoho without an explicit tool invocation.
 
 **Can I write my own skills?**
-Yes — that's the point. Copy any `SKILL.md` as a template, adjust the workflow, and open a PR. See [Contributing](#contributing) below.
+Yes. Copy any `SKILL.md` as a template, adjust the workflow, and open a PR.
 
 ---
 
 ## Contributing
 
-Contributions are welcome. The easiest way to add value:
-
 1. Open an issue describing the workflow you want to automate
-2. Fork the repo and add a new `skills/<your-skill>/SKILL.md`
+2. Fork the repo and add a new `.claude/skills/<your-skill>/SKILL.md`
 3. Submit a PR — include a sample prompt and sample output
 
 ---

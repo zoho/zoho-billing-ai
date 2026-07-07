@@ -10,6 +10,7 @@ set -euo pipefail
 REPO_URL="https://github.com/zoho/zoho-billing-ai.git"
 CLAUDE_DIR="${HOME}/.claude"
 PLUGINS_DIR="${CLAUDE_DIR}/plugins"
+SKILLS_DIR="${CLAUDE_DIR}/skills"
 TEMP_DIR=$(mktemp -d)
 
 # Detect if running via curl pipe (no interactive input available)
@@ -29,7 +30,7 @@ print_header() {
     echo ""
     echo -e "${BLUE}╔════════════════════════════════════════════╗${NC}"
     echo -e "${BLUE}║   Zoho Billing AI Claude Code Installer    ║${NC}"
-    echo -e "${BLUE}║   Payment Intelligence & Quote Management   ║${NC}"
+    echo -e "${BLUE}║   Skills & Agents for Zoho Billing         ║${NC}"
     echo -e "${BLUE}╚════════════════════════════════════════════╝${NC}"
     echo ""
 }
@@ -75,9 +76,10 @@ main() {
     fi
 
     # ---- Create Directories ----
-    print_info "Creating plugin directory..."
+    print_info "Creating plugin and skills directories..."
     mkdir -p "$PLUGINS_DIR"
-    print_success "Directory created: ${PLUGINS_DIR}"
+    mkdir -p "$SKILLS_DIR"
+    print_success "Directories created: ${PLUGINS_DIR}, ${SKILLS_DIR}"
 
     # ---- Resolve Source Directory ----
     print_info "Fetching Zoho Billing AI agents..."
@@ -139,6 +141,26 @@ main() {
         exit 1
     fi
 
+    # ---- Install Standalone Skills ----
+    SKILL_COUNT=0
+    if [ -d "$SOURCE_DIR/.claude/skills" ]; then
+        print_info "Installing standalone skills from .claude/skills/..."
+        for skill_dir in "$SOURCE_DIR/.claude/skills"/*/; do
+            if [ -d "$skill_dir" ]; then
+                skill_name=$(basename "$skill_dir")
+                if [ -f "$skill_dir/SKILL.md" ]; then
+                    rm -rf "${SKILLS_DIR}/${skill_name}"
+                    cp -r "$skill_dir" "${SKILLS_DIR}/${skill_name}"
+                    print_success "Installed skill: ${skill_name}"
+                    SKILL_COUNT=$((SKILL_COUNT + 1))
+                fi
+            fi
+        done
+        print_success "Installed ${SKILL_COUNT} standalone skill(s)"
+    else
+        print_warning "No standalone skills directory found — skipping"
+    fi
+
     # ---- Verify Installation ----
     echo ""
     print_info "Verifying installation..."
@@ -170,8 +192,10 @@ main() {
     echo -e "${GREEN}║        Installation Complete!              ║${NC}"
     echo -e "${GREEN}╚════════════════════════════════════════════╝${NC}"
     echo ""
-    echo "  Installed to: ${PLUGINS_DIR}"
+    echo "  Agents installed to: ${PLUGINS_DIR}"
+    echo "  Skills installed to: ${SKILLS_DIR}"
     echo "  Total agents: ${AGENT_COUNT} plugin(s)"
+    echo "  Total skills: ${SKILL_COUNT} skill(s)"
     echo ""
 
     if [ ${#FAILED_AGENTS[@]} -gt 0 ]; then
@@ -197,17 +221,19 @@ main() {
 
     echo -e "${BLUE}Quick Start:${NC}"
     echo "  1. Open Claude Code"
-    echo "  2. Type a trigger phrase or command:"
+    echo "  2. Use standalone skills directly:"
     echo ""
-    echo "    • Payment Intelligence:"
-    echo "      - 'Check for cards expiring soon'"
-    echo "      - 'Analyze recent payment failures'"
-    echo "      - 'Which subscriptions are at risk?'"
+    echo "    /mrr-growth"
+    echo "    /collections-today"
+    echo "    /customer-360 Acme Corp"
+    echo "    /subscription-kpis"
+    echo "    /dunning-status"
+    echo "    /create-invoice"
     echo ""
-    echo "    • Quote Acceleration:"
-    echo "      - 'Show me open quotes'"
-    echo "      - 'Which deals are stalling?'"
-    echo "      - 'Prioritize quotes for today'"
+    echo "  3. Or trigger agents with natural language:"
+    echo "    - 'Check for cards expiring soon'"
+    echo "    - 'Show me open quotes'"
+    echo "    - 'Which subscriptions are at risk?'"
     echo ""
 
     echo -e "${BLUE}Configuration:${NC}"
